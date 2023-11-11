@@ -5,11 +5,19 @@ import 'package:get/get.dart';
 
 class DashboardController extends GetxController {
   RxString username = ''.obs;
+  RxBool convertToPKR = false.obs; // Track the selected currency
 
   RxDouble totalExpenses = 0.0.obs;
   RxDouble totalIncome = 18000.0.obs;
   RxDouble remainingIncome = 18000.0.obs;
+  RxDouble totalIncomeInUsd = 63.81.obs;
+  RxDouble totalExpensesInUsd = 0.0.obs;
+  RxDouble remainingIncomeInUsd = 63.81.obs;
   List<Map<String, dynamic>> textData = [];
+  double convertPkrToUsd(double amountInPkr) {
+    // Assuming 1 USD is equal to 282 rupees
+    return amountInPkr / 282;
+  }
 
   addData(String text, String price) {
     Map<String, dynamic> newData = {
@@ -19,6 +27,13 @@ class DashboardController extends GetxController {
     textData.add(newData);
     calculateTotalExpenses();
     calculateRemainingIncome();
+    totalIncomeInUsd.value = convertTotalIncomeToUsd();
+
+// Convert totalExpenses to USD
+    totalExpensesInUsd.value = convertTotalExpensesToUsd();
+
+// Convert remainingIncome to USD
+    remainingIncomeInUsd.value = convertRemainingIncomeToUsd();
     update();
   }
 
@@ -27,6 +42,13 @@ class DashboardController extends GetxController {
     textData[index]['price'] = price;
     calculateTotalExpenses();
     calculateRemainingIncome();
+    totalIncomeInUsd.value = convertTotalIncomeToUsd();
+
+// Convert totalExpenses to USD
+    totalExpensesInUsd.value = convertTotalExpensesToUsd();
+
+// Convert remainingIncome to USD
+    remainingIncomeInUsd.value = convertRemainingIncomeToUsd();
     update();
   }
 
@@ -35,6 +57,13 @@ class DashboardController extends GetxController {
       textData.removeAt(index);
       calculateTotalExpenses();
       calculateRemainingIncome();
+      totalIncomeInUsd.value = convertTotalIncomeToUsd();
+
+// Convert totalExpenses to USD
+      totalExpensesInUsd.value = convertTotalExpensesToUsd();
+
+// Convert remainingIncome to USD
+      remainingIncomeInUsd.value = convertRemainingIncomeToUsd();
       update();
     }
   }
@@ -45,6 +74,14 @@ class DashboardController extends GetxController {
     }
     calculateTotalExpenses();
     calculateRemainingIncome();
+    // Convert totalIncome to USD
+    totalIncomeInUsd.value = convertTotalIncomeToUsd();
+
+// Convert totalExpenses to USD
+    totalExpensesInUsd.value = convertTotalExpensesToUsd();
+
+// Convert remainingIncome to USD
+    remainingIncomeInUsd.value = convertRemainingIncomeToUsd();
 
     update();
   }
@@ -57,5 +94,19 @@ class DashboardController extends GetxController {
 
   void calculateRemainingIncome() {
     remainingIncome.value = totalIncome.value - totalExpenses.value;
+  }
+
+  double convertTotalIncomeToUsd() {
+    return convertPkrToUsd(totalIncome.value);
+  }
+
+  // Conversion function for totalExpenses
+  double convertTotalExpensesToUsd() {
+    return convertPkrToUsd(totalExpenses.value);
+  }
+
+  // Conversion function for remainingIncome
+  double convertRemainingIncomeToUsd() {
+    return convertPkrToUsd(remainingIncome.value);
   }
 }

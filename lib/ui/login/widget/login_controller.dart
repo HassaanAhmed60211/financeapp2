@@ -7,20 +7,21 @@ import 'package:get/get.dart';
 
 class LoginController extends GetxController {
   void userLogin(email, password, context) async {
-    final auth = await FirebaseAuth.instance;
+    final auth = FirebaseAuth.instance;
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);
-      String id = auth.currentUser!.uid;
-      print(id);
-      Get.to(DashboardPage(id));
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        Get.to(() => DashboardPage(user.uid));
+      }
     } on FirebaseAuthException catch (e) {
       String errorMessage = "";
 
       if (e.code == 'invalid-login-credentials') {
-        var snackbar = SnackBar(content: Text("User not found"));
+        var snackbar = const SnackBar(content: Text("User not found"));
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
       } else {
-        var snackbar = SnackBar(content: Text("Other exception"));
+        var snackbar = const SnackBar(content: Text("Other exception"));
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
       }
     }

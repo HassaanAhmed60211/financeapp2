@@ -6,21 +6,26 @@ import 'package:flutter/material.dart';
 TextEditingController incomecontroller = TextEditingController();
 Future<void> showIncomeDialog(context) async {
   await showDialog(
-    
     context: context,
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (context, setState) {
           return Center(
             child: AlertDialog(
-        
+              backgroundColor: ColorConstraint().primaryColor,
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   TextFormField(
+                    keyboardType: TextInputType.number,
                     controller: incomecontroller,
-                    decoration:
-                        const InputDecoration(labelText: 'Enter your income'),
+                    style: const TextStyle(color: Colors.black),
+                    decoration: const InputDecoration(
+                        labelText: 'Enter your income',
+                        labelStyle: TextStyle(color: Colors.black26),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black38, width: 1))),
                   ),
                   const SizedBox(
                     height: 5,

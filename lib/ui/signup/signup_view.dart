@@ -66,9 +66,6 @@ class SignupView extends StatelessWidget {
               controller.userSignUp(emailcontroller.text, passcontroller.text,
                   namecontroller.text, context);
 
-              final userID = await FirebaseAuth.instance.currentUser!.uid;
-              Get.to(DashboardPage(userID));
-
               emailcontroller.clear();
               passcontroller.clear();
               namecontroller.clear();

@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 class GraphChart extends StatelessWidget {
   final List<GraphSeries> data;
 
-  GraphChart({required this.data});
+  const GraphChart({super.key, required this.data});
   @override
   Widget build(BuildContext context) {
     List<charts.Series<GraphSeries, String>> series = [
@@ -22,7 +22,7 @@ class GraphChart extends StatelessWidget {
     return Container(
       width: Get.width,
       height: 250,
-      padding: EdgeInsets.all(1),
+      padding: const EdgeInsets.all(1),
       child: Card(
         color: ColorConstraint().primaryColor,
         child: Padding(

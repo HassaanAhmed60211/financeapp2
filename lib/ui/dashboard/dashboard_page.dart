@@ -34,44 +34,27 @@ class _DashboardPageState extends State<DashboardPage> {
     // TODO: implement initState
     super.initState();
     // getId();
+    print(controllerdash.convertToPKR);
   }
 
   Stream<DocumentSnapshot> get _userStream {
     // Replace 'users' with the correct collection name
     return FirebaseFirestore.instance
         .collection('user')
-        .doc('YLg9QgnIwYc8gdQtOrbRjzKoTLp1')
+        .doc(widget.id)
         .snapshots();
   }
 
   final ThemeController _themeController = Get.put(ThemeController());
   final _auth = FirebaseAuth.instance;
 
-  final List<GraphSeries> data = [
-    GraphSeries(
-      label: 'Expenses',
-      price: double.parse(controllerdash.totalExpenses.toString()),
-      barColor: charts.ColorUtil.fromDartColor(Colors.red),
-    ),
-    GraphSeries(
-      label: 'Income',
-      price: double.parse(controllerdash.totalIncome.toString()),
-      barColor: charts.ColorUtil.fromDartColor(Colors.green),
-    ),
-    GraphSeries(
-      label: 'Savings',
-      price: double.parse(controllerdash.remainingIncome.toString()),
-      barColor: charts.ColorUtil.fromDartColor(Colors.blueGrey),
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
         backgroundColor: _themeController.isDarkMode.value
-            ?Colors.transparent: ColorConstraint().primaryColor
-     ,
+            ? Colors.transparent
+            : ColorConstraint().primaryColor,
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -84,18 +67,18 @@ class _DashboardPageState extends State<DashboardPage> {
                 builder: (BuildContext context,
                     AsyncSnapshot<DocumentSnapshot> snapshot) {
                   if (snapshot.hasError) {
-                    return Text('Something went wrong');
+                    return const Text('Something went wrong');
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Icon(
+                    return const Icon(
                       Icons.person,
                       color: Colors.black45,
                     );
                   }
 
                   if (!snapshot.hasData || !snapshot.data!.exists) {
-                    return Icon(
+                    return const Icon(
                       Icons.person,
                     );
                   }
@@ -165,7 +148,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 Obx(
                   () => Container(
                     width: Get.width,
-                    height: 140,
+                    height: Get.height * 0.2,
                     decoration: BoxDecoration(
                       color: _themeController.isDarkMode.value
                           ? Colors.grey[200]
@@ -176,68 +159,110 @@ class _DashboardPageState extends State<DashboardPage> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 30.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                      child: Column(
                         children: [
-                          Column(
-                            children: [
-                              Container(
-                                height: 40,
-                                width: 40,
-                                child: Image.asset(
-                                    'assets/svgviewer-png-output (1).png'),
-                              ),
-                              Obx(
-                                () => customTextWidget(
-                                    controllerdash.totalExpenses.toString(),
-                                    Color(0xffE53935),
-                                    FontWeight.w400,
-                                    19),
-                              ),
-                              customTextWidget('Expenses', Color(0xff212121),
-                                  FontWeight.w400, 16),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Container(
-                                  height: 40,
-                                  width: 40,
-                                  child: Image.asset(
-                                      'assets/svgviewer-png-output (2).png')),
-                              Obx(
-                                () => GestureDetector(
-                                  onTap: () {
-                                    showIncomeDialog(context);
-                                  },
-                                  child: customTextWidget(
-                                      controllerdash.totalIncome.toString(),
-                                      Color(0xff00897B),
-                                      FontWeight.w400,
-                                      19),
+                          Obx(() => SizedBox(
+                                height: 10,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    const Text(
+                                      'PKR TO USD',
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 10),
+                                    ),
+                                    Switch(
+                                      inactiveTrackColor: Colors.black38,
+                                      value: controllerdash.convertToPKR.value,
+                                      onChanged: (value) {
+                                        controllerdash.convertToPKR.value =
+                                            value;
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              customTextWidget('Income', Color(0xff212121),
-                                  FontWeight.w400, 16),
-                            ],
-                          ),
-                          Column(
+                              )),
+                          Spaces().largeh(),
+                          Spaces().largeh(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
-                                  height: 40,
-                                  width: 40,
-                                  child: Image.asset(
-                                      'assets/svgviewer-png-output (3).png')),
-                              Obx(
-                                () => customTextWidget(
-                                    controllerdash.remainingIncome.toString(),
-                                    Color(0xff212121),
-                                    FontWeight.w400,
-                                    19),
+                              Column(
+                                children: [
+                                  SizedBox(
+                                    height: 40,
+                                    width: 40,
+                                    child: Image.asset(
+                                        'assets/svgviewer-png-output (1).png'),
+                                  ),
+                                  Obx(
+                                    () => customTextWidget(
+                                        controllerdash.convertToPKR.value
+                                            ? "\$${controllerdash.totalExpensesInUsd.toStringAsFixed(2)}"
+                                            : "Rs.${controllerdash.totalExpenses.toString()}",
+                                        const Color(0xffE53935),
+                                        FontWeight.w800,
+                                        14),
+                                  ),
+                                  customTextWidget(
+                                      'Expenses',
+                                      const Color(0xff212121),
+                                      FontWeight.w400,
+                                      16),
+                                ],
                               ),
-                              customTextWidget('Savings', Color(0xff212121),
-                                  FontWeight.w400, 16),
+                              Column(
+                                children: [
+                                  SizedBox(
+                                      height: 40,
+                                      width: 40,
+                                      child: Image.asset(
+                                          'assets/svgviewer-png-output (2).png')),
+                                  Obx(
+                                    () => GestureDetector(
+                                      onTap: () {
+                                        showIncomeDialog(context);
+                                      },
+                                      child: customTextWidget(
+                                          controllerdash.convertToPKR.value
+                                              ? "\$${controllerdash.totalIncomeInUsd.toStringAsFixed(2)}"
+                                              : "Rs.${controllerdash.totalIncome.toString()}",
+                                          const Color(0xff00897B),
+                                          FontWeight.w800,
+                                          14),
+                                    ),
+                                  ),
+                                  customTextWidget(
+                                      'Income',
+                                      const Color(0xff212121),
+                                      FontWeight.w400,
+                                      16),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  SizedBox(
+                                      height: 40,
+                                      width: 40,
+                                      child: Image.asset(
+                                          'assets/svgviewer-png-output (3).png')),
+                                  Obx(
+                                    () => customTextWidget(
+                                        controllerdash.convertToPKR.value
+                                            ? "\$${controllerdash.remainingIncomeInUsd.toStringAsFixed(2)}"
+                                            : "Rs.${controllerdash.remainingIncome.toString()}",
+                                        const Color(0xff212121),
+                                        FontWeight.w800,
+                                        14),
+                                  ),
+                                  customTextWidget(
+                                      'Savings',
+                                      const Color(0xff212121),
+                                      FontWeight.w400,
+                                      16),
+                                ],
+                              ),
                             ],
                           ),
                         ],
@@ -251,17 +276,17 @@ class _DashboardPageState extends State<DashboardPage> {
                     return GraphChart(
                       data: [
                         GraphSeries(
-                          label: 'Expenses',
-                          price: double.parse(
-                              controllerdash.totalExpenses.toString()),
-                          barColor: charts.ColorUtil.fromDartColor(Colors.red),
-                        ),
-                        GraphSeries(
                           label: 'Income',
                           price: double.parse(
                               controllerdash.totalIncome.toString()),
                           barColor:
                               charts.ColorUtil.fromDartColor(Colors.green),
+                        ),
+                        GraphSeries(
+                          label: 'Expenses',
+                          price: double.parse(
+                              controllerdash.totalExpenses.toString()),
+                          barColor: charts.ColorUtil.fromDartColor(Colors.red),
                         ),
                         GraphSeries(
                           label: 'Savings',
@@ -304,7 +329,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                             ListView.builder(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               itemCount: controllerdash.textData.length,
                               itemBuilder: (context, index) {
                                 Map<String, dynamic> data =
@@ -330,46 +355,52 @@ class _DashboardPageState extends State<DashboardPage> {
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 8.0),
                                             child: Card(
-                                              child: ListTile(
-                                                title: Text(
-                                                    controller.textData[index]
+                                              color: Colors.blue[900],
+                                              child: Obx(() => ListTile(
+                                                    title: Text(controller
+                                                                .textData[index]
                                                             ['text'] ??
                                                         ''),
-                                                subtitle: Text(
-                                                    "Rs.${controller.textData[index]['price'] ?? ''}"),
-                                                trailing: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    IconButton(
-                                                      icon: Icon(Icons.edit),
-                                                      onPressed: () {
-                                                        String text =
-                                                            controllerdash
-                                                                    .textData[
-                                                                index]['text'];
-                                                        String price =
-                                                            controllerdash
-                                                                    .textData[
-                                                                index]['price'];
-                                                        showUpdateDialog(
-                                                            context,
-                                                            index,
-                                                            text,
-                                                            price);
-                                                      },
+                                                    subtitle: Text(controller
+                                                            .convertToPKR.value
+                                                        ? "\$${controller.convertPkrToUsd(double.parse(controller.textData[index]['price'])).toStringAsFixed(2)}"
+                                                        : "Rs.${controller.textData[index]['price']}"),
+                                                    trailing: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        IconButton(
+                                                          icon: const Icon(
+                                                              Icons.edit),
+                                                          onPressed: () {
+                                                            String text =
+                                                                controllerdash
+                                                                        .textData[
+                                                                    index]['text'];
+                                                            String price =
+                                                                controllerdash
+                                                                        .textData[
+                                                                    index]['price'];
+                                                            showUpdateDialog(
+                                                                context,
+                                                                index,
+                                                                text,
+                                                                price);
+                                                          },
+                                                        ),
+                                                        Spaces().smallh(),
+                                                        IconButton(
+                                                          icon: const Icon(
+                                                              Icons.delete),
+                                                          onPressed: () {
+                                                            controller
+                                                                .deleteData(
+                                                                    index);
+                                                          },
+                                                        ),
+                                                      ],
                                                     ),
-                                                    Spaces().smallh(),
-                                                    IconButton(
-                                                      icon: Icon(Icons.delete),
-                                                      onPressed: () {
-                                                        controller
-                                                            .deleteData(index);
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                                  )),
                                             ),
                                           );
                                   });
