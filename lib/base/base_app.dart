@@ -1,4 +1,5 @@
 import 'package:finance_track_app/core/utils.dart';
+import 'package:finance_track_app/ui/bottom_nav/bottom_nav.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
 import 'package:finance_track_app/ui/login/login_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,7 +18,7 @@ class FinanaceTrackingApp extends StatelessWidget {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.system,
-      home: user != null ? DashboardPage(user!.uid) : LoginView(),
+      home: user != null ? MyBottomNavBar() : LoginView(),
     );
   }
 }

@@ -1,12 +1,17 @@
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/custom_elevated.dart';
 import 'package:finance_track_app/core/widgets/spaces_widget.dart';
+import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
+import 'package:finance_track_app/ui/financial_goals/goal_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-TextEditingController expensename = TextEditingController();
-TextEditingController expenseprice = TextEditingController();
-Future<void> showLoginDialog(context) async {
+TextEditingController updatesavings = TextEditingController();
+GoalController controllergoal = Get.put(GoalController());
+
+Future<void> showUpdateGoalDialog(context, index, text) async {
+  updatesavings.text = text;
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -19,22 +24,10 @@ Future<void> showLoginDialog(context) async {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   TextFormField(
-                    controller: expensename,
+                    controller: updatesavings,
                     style: const TextStyle(color: Colors.black),
                     decoration: const InputDecoration(
-                        labelText: 'Expense name',
-                        labelStyle: TextStyle(color: Colors.black26),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black38, width: 1))),
-                  ),
-                  Spaces().midh(),
-                  TextFormField(
-                    controller: expenseprice,
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(color: Colors.black),
-                    decoration: const InputDecoration(
-                        labelText: 'Expense price',
+                        labelText: 'Update amount you have for this goal',
                         labelStyle: TextStyle(color: Colors.black26),
                         enabledBorder: OutlineInputBorder(
                             borderSide:
@@ -44,10 +37,9 @@ Future<void> showLoginDialog(context) async {
                     height: 5,
                   ),
                   customElevetedBtn(() {
-                    controllerdash.addData(expensename.text, expenseprice.text);
-                    print(controllerdash.textData);
-                    expensename.clear();
-                    expenseprice.clear();
+                    controllergoal.updateData(index, updatesavings.text);
+                    updatesavings.clear();
+
                     Navigator.pop(context);
                   }, 'Add', 20)
                 ],
