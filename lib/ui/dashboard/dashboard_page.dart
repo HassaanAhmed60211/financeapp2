@@ -62,7 +62,9 @@ class _DashboardPageState extends State<DashboardPage> {
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: SingleChildScrollView(
             child: Column(
+              
               children: [
+                
                 Spaces().largeh(),
                 Obx(() => customTrackContainer(context)),
                 Spaces().midh(),

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance_track_app/core/Model/user_model.dart';
+import 'package:finance_track_app/ui/bottom_nav/bottom_nav.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
 import 'package:finance_track_app/ui/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,7 +20,7 @@ class SignupController extends GetxController {
 
       if (user != null) {
         await addUser(UserModel(userid: user.uid, name: name, email: email));
-        Get.to(() => Home());
+        Get.to(() => MyBottomNavBar());
       }
     } on FirebaseAuthException catch (e) {
       print(e.code);

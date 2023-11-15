@@ -1,4 +1,5 @@
 import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
+import 'package:finance_track_app/ui/expense_analytics/expense_analytics.dart';
 import 'package:finance_track_app/ui/financial_goals/financial_goals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,7 @@ class BottomNavBarController extends GetxController {
   List<Widget> pages = [
     DashboardPage(id),
     FinancialGoals(),
-    DashboardPage(id),
-    DashboardPage(id),
+    ExpenseAnalytics(),
     DashboardPage(id),
   ];
 }

@@ -53,7 +53,7 @@ Future<void> showUpdateDialog(context, index, text, price) async {
                     expensename.clear();
                     expenseprice.clear();
                     Navigator.pop(context);
-                  }, 'Add', 20)
+                  }, 'Update', 20)
                 ],
               ),
             ),

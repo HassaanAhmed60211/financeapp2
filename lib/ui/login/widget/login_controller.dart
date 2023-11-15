@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:finance_track_app/ui/bottom_nav/bottom_nav.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
 import 'package:finance_track_app/ui/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,7 +14,7 @@ class LoginController extends GetxController {
       await auth.signInWithEmailAndPassword(email: email, password: password);
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        Get.to(() => Home());
+        Get.to(() => MyBottomNavBar());
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage = "";

@@ -25,29 +25,46 @@ Widget customTrackContainer(context) {
       border: Border.all(color: Colors.black38, width: 1),
     ),
     child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 25.0),
       child: Column(
         children: [
-          Obx(() => SizedBox(
-                height: 10,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Text(
-                      'PKR TO USD',
-                      style: TextStyle(color: Colors.black, fontSize: 10),
-                    ),
-                    Switch(
-                      inactiveTrackColor: Colors.black38,
-                      value: controllerdash.convertToPKR.value,
-                      onChanged: (value) {
-                        controllerdash.convertToPKR.value = value;
-                      },
-                    ),
-                  ],
+          SizedBox(
+            height: 30,
+            
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    
+                  },
+                  child: Text(
+                    'VIEW EXPENSE ANALYTICS',
+                    style: TextStyle(color: Colors.black, fontSize: 10,fontWeight: FontWeight.w700,decoration: TextDecoration.underline),
+                  ),
                 ),
-              )),
-          Spaces().largeh(),
+                Obx(() => SizedBox(
+                      height: 10,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const Text(
+                            'PKR TO USD',
+                            style: TextStyle(color: Colors.black, fontSize: 10),
+                          ),
+                          Switch(
+                            inactiveTrackColor: Colors.black38,
+                            value: controllerdash.convertToPKR.value,
+                            onChanged: (value) {
+                              controllerdash.convertToPKR.value = value;
+                            },
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
+            ),
+          ),
           Spaces().largeh(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

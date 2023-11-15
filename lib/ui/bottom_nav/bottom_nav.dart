@@ -16,14 +16,13 @@ class MyBottomNavBar extends StatelessWidget {
           return bnc.pages[bnc.currentIndex.value];
         }),
         bottomNavigationBar: SafeArea(
-          
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
 
               decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                  color: Colors.grey[100],
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(16),
                     topRight: Radius.circular(16),
@@ -56,9 +55,9 @@ class MyBottomNavBar extends StatelessWidget {
                   Flexible(
                     child: customBottomNavBarChildContainer(
                         controller: bnc,
-                        icon: Icons.message,
+                        icon: Icons.analytics,
                         index: 2,
-                        text: 'Messages'),
+                        text: 'Expense Analytics'),
                   ),
                   Spaces().midw(),
                   Flexible(
@@ -67,16 +66,6 @@ class MyBottomNavBar extends StatelessWidget {
                         icon: Icons.person,
                         index: 3,
                         text: 'Profile'),
-                  ),
-                  Spaces().midw(),
-                  Flexible(
-                    child: customBottomNavBarChildContainer(
-                      controller: bnc,
-                      // icon: Icons.monetization_on_outlined,
-                      icon: Icons.replay,
-                      index: 4,
-                      text: 'Opportunites',
-                    ),
                   ),
                 ],
               ),
