@@ -13,7 +13,7 @@ class MyBottomNavBar extends StatelessWidget {
         backgroundColor: Colors.grey[100],
         body: Obx(() {
           debugPrint("update screen");
-          return bnc.pages[bnc.currentIndex.value];
+          return bnc.pages[ bnc.currentIndex.value];
         }),
         bottomNavigationBar: SafeArea(
           child: Padding(

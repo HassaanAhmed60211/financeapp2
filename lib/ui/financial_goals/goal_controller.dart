@@ -9,7 +9,10 @@ class GoalController extends GetxController {
   RxDouble progressval = 0.0.obs;
   RxDouble percentage = 0.0.obs;
   RxDouble remainingperc = 0.0.obs;
-
+  RxString nameNotification = ''.obs;
+  RxDouble percNotification = 0.0.obs;
+  RxString nameNotification1 = ''.obs;
+  RxString percNotification1 = ''.obs;
   List goalData = [];
 
   addData(String goalname, String curentsaving, String totalsaving) {
@@ -21,7 +24,22 @@ class GoalController extends GetxController {
 
     goalData.add(newData);
     print("DATAAAAAAAAA $goalData");
+    goalNotification();
     update();
+  }
+
+  void goalNotification() {
+    for (int i = 0; i < goalData.length; i++) {
+      percentage.value = double.parse(goalData[i]['curentsaving']) /
+          double.parse(goalData[i]['totalsaving']) *
+          100;
+      if (percentage.value > 95) {
+        nameNotification.value = goalData[i]['goalname'];
+        percNotification.value = percentage.value;
+      }
+    }
+    print(nameNotification);
+    print(percNotification);
   }
 
   double calculateProgress(double currentValue, double maxValue) {
@@ -48,11 +66,13 @@ class GoalController extends GetxController {
     } else {
       goalData[index]['curentsaving'] = amount;
     }
+    goalNotification();
     update();
   }
 
   deleteData(int index) {
     goalData.removeAt(index);
+
     update();
   }
 }

@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance_track_app/core/theme.dart';
 import 'package:finance_track_app/core/utils.dart';
@@ -7,8 +9,11 @@ import 'package:finance_track_app/core/widgets/app_bar.dart';
 import 'package:finance_track_app/core/widgets/spaces_widget.dart';
 import 'package:finance_track_app/core/widgets/text_widgets.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
+import 'package:finance_track_app/ui/dashboard/widget/custom_trackcontainer.dart';
+import 'package:finance_track_app/ui/login/widget/bottom_sheet.dart';
 import 'package:finance_track_app/ui/profile/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -61,21 +66,47 @@ class _ProfilePageState extends State<ProfilePage> {
               Center(
                 child: Stack(
                   children: [
-                    CircleAvatar(
-                      radius: 85,
-                      backgroundColor: Colors.grey.shade200,
-                      child: GetBuilder<ProfileController>(
-                        builder: (controller) {
-                          return CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 80,
-                            backgroundImage: controller.imagePaths != null
-                                ? Image.file(File(controller.imagePaths!.path))
-                                    .image
-                                : AssetImage('assets/person-image.png'),
+                    StreamBuilder<DocumentSnapshot>(
+                      stream: personnalData,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // Show a loading indicator while the data is being fetched
+                          return CircularProgressIndicator(
+                            color: Colors.blue,
                           );
-                        },
-                      ),
+                        } else if (snapshot.hasData) {
+                          String imageUrl = snapshot.data!['imageUrl'];
+
+                          return GetBuilder<ProfileController>(
+                            builder: (controller) {
+                              return CircleAvatar(
+                                radius: 85,
+                                backgroundColor: Colors.grey[300],
+                                child: CircleAvatar(
+                                  radius: 80,
+                                  backgroundColor: Colors.grey.shade300,
+                                  backgroundImage:
+                                      AssetImage('assets/loading.gif'),
+                                  child: controller.isVal
+                                      ? Container(
+                                          color: Colors.transparent,
+                                        )
+                                      : CircleAvatar(
+                                          backgroundColor: Colors.transparent,
+                                          radius: 80,
+                                          backgroundImage:
+                                              NetworkImage(imageUrl),
+                                        ),
+                                ),
+                              );
+                            },
+                          );
+                        } else {
+                          return Container(); // Handle the case when there is no data
+                        }
+                      },
                     ),
                     Positioned(
                       bottom: 1,
@@ -85,6 +116,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           XFile? image = await imagePickerUtil.pickImages();
                           if (image != null) {
                             controller.setImagePath(image);
+                            controller.isValue();
+                            Timer(Duration(seconds: 17), () {
+                              controller.isNotValue();
+                            });
                           }
                         },
                         child: Container(
@@ -138,19 +173,39 @@ class _ProfilePageState extends State<ProfilePage> {
                                 FontWeight.w800,
                                 21),
                             Spaces().largeh(),
-                            customTextWidget(
-                                snapshot.data!['name'],
-                                _themeController.isDarkMode.value
-                                    ? ColorConstraint().primaryColor
-                                    : ColorConstraint().secondaryColor,
-                                FontWeight.w800,
-                                21),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                customTextWidget(
+                                    snapshot.data!['name'],
+                                    _themeController.isDarkMode.value
+                                        ? ColorConstraint().primaryColor
+                                        : ColorConstraint.primaryLightColor,
+                                    FontWeight.w800,
+                                    21),
+                                IconButton(
+                                    onPressed: () {
+                                      showBottomInfoProfile(
+                                          context, snapshot.data!['name']);
+                                    },
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color: _themeController.isDarkMode.value
+                                          ? ColorConstraint().primaryColor
+                                          : ColorConstraint.primaryLightColor,
+                                    ))
+                              ],
+                            ),
                           ],
                         ),
                       );
                     }
                     return CircularProgressIndicator();
                   }),
+              SizedBox(
+                height: 70,
+              ),
+              customTrackContainer(context),
             ],
           ),
         ),

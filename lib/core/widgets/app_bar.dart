@@ -12,7 +12,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 final ThemeController _themeController = Get.put(ThemeController());
 final _auth = FirebaseAuth.instance;
 
-Widget GlobalAppBar(_userStream,text) {
+Widget GlobalAppBar(_userStream, text) {
   return AppBar(
     elevation: 0,
     backgroundColor: Colors.transparent,
@@ -96,14 +96,11 @@ Widget GlobalAppBar(_userStream,text) {
   );
 }
 
-
-
 Widget GlobalAppBar1(text) {
   return AppBar(
     elevation: 0,
     backgroundColor: Colors.transparent,
-
-      
+    automaticallyImplyLeading: false,
     centerTitle: true,
     title: Padding(
       padding: const EdgeInsets.only(

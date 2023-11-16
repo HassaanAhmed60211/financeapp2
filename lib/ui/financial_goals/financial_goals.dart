@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:finance_track_app/core/theme.dart';
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/app_bar.dart';
@@ -7,6 +8,7 @@ import 'package:finance_track_app/core/widgets/text_widgets.dart';
 import 'package:finance_track_app/ui/financial_goals/dialogs/add_dialog.dart';
 import 'package:finance_track_app/ui/financial_goals/goal_controller.dart';
 import 'package:finance_track_app/ui/financial_goals/widgets/goal_datalist.dart';
+import 'package:finance_track_app/ui/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,6 +23,17 @@ class _FinancialGoalsState extends State<FinancialGoals> {
   final ThemeController _themeController = Get.put(ThemeController());
 
   GoalController controllergoal = Get.put(GoalController());
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (controllergoal.nameNotification.isNotEmpty) {
+      NotificationService().showNotification(
+          title: controllergoal.nameNotification.value,
+          body:
+              'Hey!! You are to close to complete your Goal. Your Goal is ${controllergoal.percNotification.value}% completed.');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

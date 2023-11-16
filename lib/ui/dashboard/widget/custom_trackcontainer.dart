@@ -2,18 +2,18 @@ import 'package:finance_track_app/core/theme.dart';
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/spaces_widget.dart';
 import 'package:finance_track_app/core/widgets/text_widgets.dart';
+import 'package:finance_track_app/ui/bottom_nav/bottom_nav.dart';
+import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
 import 'package:finance_track_app/ui/dashboard/dialogs/income_dialogs.dart';
-import 'package:finance_track_app/ui/expense_analytics/expense_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 final ThemeController _themeController = Get.put(ThemeController());
 final _auth = FirebaseAuth.instance;
 DashboardController controllerdash = Get.put(DashboardController());
-
+BottomNavBarController bottomNavController = Get.put(BottomNavBarController());
 Widget customTrackContainer(context) {
   return Container(
     width: Get.width,
@@ -31,17 +31,21 @@ Widget customTrackContainer(context) {
         children: [
           SizedBox(
             height: 30,
-            
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
                   onPressed: () {
-                    ExpenseAnalytics();
+                    bottomNavController.currentIndex.value = 2;
+                    Get.to(() => MyBottomNavBar());
                   },
-                  child: Text(
+                  child: const Text(
                     'VIEW EXPENSE ANALYTICS',
-                    style: TextStyle(color: Colors.black, fontSize: 10,fontWeight: FontWeight.w700,decoration: TextDecoration.underline),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        decoration: TextDecoration.underline),
                   ),
                 ),
                 Obx(() => SizedBox(
