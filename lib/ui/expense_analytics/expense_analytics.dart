@@ -1,4 +1,3 @@
-import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:finance_track_app/core/theme.dart';
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/app_bar.dart';
@@ -8,8 +7,6 @@ import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_charts/flutter_charts.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:intl/intl.dart';
 
 class ExpenseAnalytics extends StatelessWidget {
@@ -123,7 +120,7 @@ class ExpenseAnalytics extends StatelessWidget {
       return lineChart;
     } catch (e) {
       print('Error in chartToRun: $e');
-      return Text('Error generating chart');
+      return const Text('Error generating chart');
     }
   }
 }

@@ -1,28 +1,20 @@
 import 'dart:async';
-import 'dart:io';
-
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance_track_app/core/theme.dart';
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/app_bar.dart';
 import 'package:finance_track_app/core/widgets/spaces_widget.dart';
 import 'package:finance_track_app/core/widgets/text_widgets.dart';
-import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
 import 'package:finance_track_app/ui/dashboard/widget/custom_trackcontainer.dart';
 import 'package:finance_track_app/ui/login/widget/bottom_sheet.dart';
 import 'package:finance_track_app/ui/profile/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:badges/badges.dart' as bdg;
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({super.key});
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -37,7 +29,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    final db = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser;
     personnalData = FirebaseFirestore.instance
         .collection('user')
@@ -73,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           // Show a loading indicator while the data is being fetched
-                          return CircularProgressIndicator(
+                          return const CircularProgressIndicator(
                             color: Colors.blue,
                           );
                         } else if (snapshot.hasData) {
@@ -88,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   radius: 80,
                                   backgroundColor: Colors.grey.shade300,
                                   backgroundImage:
-                                      AssetImage('assets/loading.gif'),
+                                      const AssetImage('assets/loading.gif'),
                                   child: controller.isVal
                                       ? Container(
                                           color: Colors.transparent,
@@ -123,8 +114,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           }
                         },
                         child: Container(
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
+                          child: const Padding(
+                            padding: EdgeInsets.all(2.0),
                             child: Icon(Icons.add_a_photo,
                                 color: ColorConstraint.primaryLightColor),
                           ),
@@ -133,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 width: 3,
                                 color: Colors.white,
                               ),
-                              borderRadius: BorderRadius.all(
+                              borderRadius: const BorderRadius.all(
                                 Radius.circular(
                                   50,
                                 ),
@@ -159,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   builder: (BuildContext context,
                       AsyncSnapshot<DocumentSnapshot> snapshot) {
                     if (snapshot.hasData) {
-                      return Container(
+                      return SizedBox(
                         width: Get.width,
                         child: Column(
                           children: [
@@ -200,9 +191,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       );
                     }
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }),
-              SizedBox(
+              const SizedBox(
                 height: 70,
               ),
               customTrackContainer(context),

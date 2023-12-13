@@ -71,6 +71,9 @@ Widget GlobalAppBar(_userStream, text) {
         padding: const EdgeInsets.only(top: 10, right: 3),
         child: Obx(
           () => Switch(
+            activeColor: Colors.blue[900],
+            activeTrackColor: Colors.blue.shade100,
+            inactiveThumbColor: Colors.white,
             inactiveTrackColor: Colors.grey,
             value: _themeController.isDarkMode.value,
             onChanged: (value) => _themeController.toggleTheme(),

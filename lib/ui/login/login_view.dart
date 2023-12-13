@@ -1,5 +1,4 @@
 import 'package:finance_track_app/core/utils.dart';
-import 'package:finance_track_app/core/widgets/app_bar.dart';
 import 'package:finance_track_app/core/widgets/custom_elevated.dart';
 import 'package:finance_track_app/core/widgets/spaces_widget.dart';
 import 'package:finance_track_app/core/widgets/text_widgets.dart';

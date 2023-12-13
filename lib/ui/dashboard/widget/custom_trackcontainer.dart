@@ -49,7 +49,7 @@ Widget customTrackContainer(context) {
                   ),
                 ),
                 Obx(() => SizedBox(
-                      height: 10,
+                      height: Get.height * 0.2,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -58,6 +58,9 @@ Widget customTrackContainer(context) {
                             style: TextStyle(color: Colors.black, fontSize: 10),
                           ),
                           Switch(
+                            activeColor: Colors.blue[900],
+                            activeTrackColor: Colors.blue.shade100,
+                            inactiveThumbColor: Colors.white,
                             inactiveTrackColor: Colors.black38,
                             value: controllerdash.convertToPKR.value,
                             onChanged: (value) {
@@ -85,7 +88,7 @@ Widget customTrackContainer(context) {
                   Obx(
                     () => customTextWidget(
                         controllerdash.convertToPKR.value
-                            ? "\$${controllerdash.totalExpensesInUsd.toStringAsFixed(2)}"
+                            ? "\$${controllerdash.convertPkrToUsd(double.parse(controllerdash.totalExpenses.toString())).toStringAsFixed(2)}"
                             : "Rs.${controllerdash.totalExpenses.toString()}",
                         const Color(0xffE53935),
                         FontWeight.w800,
@@ -109,7 +112,7 @@ Widget customTrackContainer(context) {
                       },
                       child: customTextWidget(
                           controllerdash.convertToPKR.value
-                              ? "\$${controllerdash.totalIncomeInUsd.toStringAsFixed(2)}"
+                              ? "\$${controllerdash.convertPkrToUsd(double.parse(controllerdash.totalIncome.toString())).toStringAsFixed(2)}"
                               : "Rs.${controllerdash.totalIncome.toString()}",
                           const Color(0xff00897B),
                           FontWeight.w800,
@@ -130,7 +133,7 @@ Widget customTrackContainer(context) {
                   Obx(
                     () => customTextWidget(
                         controllerdash.convertToPKR.value
-                            ? "\$${controllerdash.remainingIncomeInUsd.toStringAsFixed(2)}"
+                            ? "\$${controllerdash.convertPkrToUsd(double.parse(controllerdash.remainingIncome.toString())).toStringAsFixed(2)}"
                             : "Rs.${controllerdash.remainingIncome.toString()}",
                         const Color(0xff212121),
                         FontWeight.w800,

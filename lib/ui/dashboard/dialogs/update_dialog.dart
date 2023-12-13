@@ -49,7 +49,7 @@ Future<void> showUpdateDialog(context, index, text, price) async {
                   ),
                   customElevetedBtn(() {
                     controllerdash.updateData(
-                        index, expensename.text, expenseprice.text);
+                        expensename.text, expenseprice.text, text);
                     expensename.clear();
                     expenseprice.clear();
                     Navigator.pop(context);

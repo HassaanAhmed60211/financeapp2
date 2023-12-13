@@ -6,12 +6,12 @@ import 'package:finance_track_app/ui/financial_goals/goal_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-TextEditingController goalname = TextEditingController();
-TextEditingController goalcurrentsaving = TextEditingController();
-TextEditingController goaltotalsaving = TextEditingController();
-
-GoalController controller = Get.put(GoalController());
 Future<void> showAddGoalDialog(context) async {
+  TextEditingController goalname = TextEditingController();
+  TextEditingController goalcurrentsaving = TextEditingController();
+  TextEditingController goaltotalsaving = TextEditingController();
+
+  GoalController controller = Get.put(GoalController());
   await showDialog(
     context: context,
     builder: (BuildContext context) {

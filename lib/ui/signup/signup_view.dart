@@ -1,14 +1,11 @@
 import 'package:finance_track_app/core/utils.dart';
-import 'package:finance_track_app/core/widgets/app_bar.dart';
 import 'package:finance_track_app/core/widgets/custom_elevated.dart';
 import 'package:finance_track_app/core/widgets/spaces_widget.dart';
 import 'package:finance_track_app/core/widgets/text_widgets.dart';
 import 'package:finance_track_app/core/widgets/textfield_widget.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
-import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
 import 'package:finance_track_app/ui/login/login_view.dart';
 import 'package:finance_track_app/ui/signup/widget/signup_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

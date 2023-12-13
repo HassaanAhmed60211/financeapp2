@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance_track_app/core/Model/user_model.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_nav.dart';
-import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
-import 'package:finance_track_app/ui/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +21,7 @@ class SignupController extends GetxController {
         Get.to(() => MyBottomNavBar());
       }
     } on FirebaseAuthException catch (e) {
-      print(e.code);
+      debugPrint(e.code);
       if (e.code == 'email-already-in-use') {
         var snackbar = const SnackBar(
           content: Text('This email already exists'),

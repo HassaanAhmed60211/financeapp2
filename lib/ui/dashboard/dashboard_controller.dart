@@ -1,15 +1,18 @@
-import 'dart:async';
-
-import 'package:finance_track_app/core/Model/data_model.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finance_track_app/core/Model/income_model.dart';
+import 'package:finance_track_app/core/Model/transaction_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class DashboardController extends GetxController {
   RxString username = ''.obs;
   RxBool convertToPKR = false.obs; // Track the selected currency
-
+  final db = FirebaseFirestore.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
   RxDouble totalExpenses = 0.0.obs;
   RxDouble totalIncome = 0.0.obs;
   RxDouble remainingIncome = 0.0.obs;
@@ -22,12 +25,25 @@ class DashboardController extends GetxController {
   List<String> perIncome = <String>[];
   List<Map<String, dynamic>> textData = [];
   double remainingSavings = 0.0;
-  double convertPkrToUsd(double amountInPkr) {
-    // Assuming 1 USD is equal to 282 rupees
-    return amountInPkr / 282;
+  double pkrValue = 0.0;
+
+  @override
+  void onInit() async {
+    // Get called when controller is created
+    super.onInit();
+    var incomeData = await db
+        .collection('expense_analytics')
+        .doc(auth.currentUser!.uid)
+        .get();
+
+    fetchExchangeRate();
+    totalIncome.value = incomeData['income'];
+    remainingIncome.value = incomeData['savings'];
+    calculateTotalExpenses();
   }
 
-  addData(String text, String price, context) {
+//Add transaction in firebase
+  addData(String text, String price, context) async {
     var date = DateTime.now();
 
     Map<String, dynamic> newData = {
@@ -36,114 +52,171 @@ class DashboardController extends GetxController {
       'time': DateFormat.MMMMd().format(date),
       'month': DateFormat.MMMM().format(date),
     };
- if (textData.isNotEmpty && newData['month'] != textData[textData.length - 1]['month']) {
-    time.clear();
-    perExpense.clear();
-    perSaving.clear();
-  }
+    if (textData.isNotEmpty &&
+        newData['month'] != textData[textData.length - 1]['month']) {
+      time.clear();
+      perExpense.clear();
+      perSaving.clear();
+    }
     textData.add(newData);
-    print("DATAAAAA $textData");
     time.add(newData['time']);
     perExpense.add(double.tryParse(newData['price'] ?? '0.0') ?? 0.0);
 
+    await db
+        .collection('transactions')
+        .doc(auth.currentUser!.uid)
+        .collection('add_transaction')
+        .add(newData);
+
     calculateTotalExpenses();
     calculateRemainingIncome();
-
-    totalIncomeInUsd.value = convertTotalIncomeToUsd();
-
-// Convert totalExpenses to USD
-    totalExpensesInUsd.value = convertTotalExpensesToUsd();
-
-// Convert remainingIncome to USD
-    remainingIncomeInUsd.value = convertRemainingIncomeToUsd();
     perSaving.add(remainingIncome.value);
-    print("TIME HERE $time");
-    print("DATAAAA HERE $perExpense");
-    print("DATAAAA1 HERE $perSaving");
-
     update();
   }
 
-  updateData(int index, String title, String price) {
-    textData[index]['text'] = title;
-    textData[index]['price'] = price;
-    perExpense[index] =
-        double.tryParse(textData[index]['price'] ?? '0.0') ?? 0.0;
+//Update transaction in firebase
+  updateData(String title, String price, String text) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('transactions')
+              .doc(auth.currentUser!.uid)
+              .collection('add_transaction')
+              .where('text', isEqualTo: text)
+              .get();
 
-    calculateTotalExpenses();
-    calculateRemainingIncome();
-    totalIncomeInUsd.value = convertTotalIncomeToUsd();
-
-// Convert totalExpenses to USD
-    totalExpensesInUsd.value = convertTotalExpensesToUsd();
-
-// Convert remainingIncome to USD
-    remainingIncomeInUsd.value = convertRemainingIncomeToUsd();
-    perSaving[index] = remainingIncome.value;
-    update();
-  }
-
-  deleteData(int index) {
-    if (index >= 0 && index < textData.length) {
-      textData.removeAt(index);
+      for (QueryDocumentSnapshot<Map<String, dynamic>> document
+          in querySnapshot.docs) {
+        await document.reference.update({
+          'text': title,
+          'price': price,
+        });
+      }
       calculateTotalExpenses();
       calculateRemainingIncome();
-      totalIncomeInUsd.value = convertTotalIncomeToUsd();
-
-// Convert totalExpenses to USD
-      totalExpensesInUsd.value = convertTotalExpensesToUsd();
-
-// Convert remainingIncome to USD
-      remainingIncomeInUsd.value = convertRemainingIncomeToUsd();
+      fetchAllTransaction();
       update();
+    } catch (e) {
+      print('Error updating transactions: $e');
     }
   }
 
-  void updateIncome(double? income) {
+//Delete transaction from firebase
+  Future<void> deleteData(index, String searchText) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('transactions')
+              .doc(auth.currentUser!.uid)
+              .collection('add_transaction')
+              .where('text', isEqualTo: searchText)
+              .get();
+
+      for (QueryDocumentSnapshot<Map<String, dynamic>> document
+          in querySnapshot.docs) {
+        await document.reference.delete();
+      }
+      calculateTotalExpenses();
+      calculateRemainingIncome();
+      fetchAllTransaction();
+      calculateTotalExpenses();
+      update();
+    } catch (e) {
+      print('Error deleting transactions: $e');
+    }
+  }
+
+  // update income and it update on firebase
+  void updateIncome(double? income) async {
     if (income != null) {
       totalIncome.value = income;
-      perIncome.clear(); // Clear the list before updating
+      debugPrint(totalIncome.value.toString());
+      perIncome.clear();
 
       for (var i = 5; i > 0; i--) {
-        int val = (totalIncome.value / i).toInt();
+        int val = totalIncome.value ~/ i;
         perIncome.add(val.toString());
       }
       calculateTotalExpenses();
       calculateRemainingIncome();
-      // Convert totalIncome to USD
-      totalIncomeInUsd.value = convertTotalIncomeToUsd();
-
-// Convert totalExpenses to USD
-      totalExpensesInUsd.value = convertTotalExpensesToUsd();
-
-// Convert remainingIncome to USD
-      remainingIncomeInUsd.value = convertRemainingIncomeToUsd();
-      print('FOR LOOP >> $perIncome');
+      IncomeModel incomeData = IncomeModel(
+        income: income,
+        savings: remainingIncome.value,
+      );
+      await db
+          .collection('expense_analytics')
+          .doc(auth.currentUser!.uid)
+          .set(incomeData.toJson());
       update();
     }
   }
 
-  void calculateTotalExpenses() {
-    totalExpenses.value = textData
-        .map((item) => double.tryParse(item['price'] ?? '0.0') ?? 0.0)
-        .fold(0.0, (previous, current) => previous + current);
+  //calculate total expenses from firebase
+  void calculateTotalExpenses() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('transactions')
+              .doc(auth.currentUser!.uid)
+              .collection('add_transaction')
+              .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        totalExpenses.value = querySnapshot.docs
+            .map((document) =>
+                double.tryParse(document['price'] ?? '0.0') ?? 0.0)
+            .fold(0.0, (previous, current) => previous + current);
+        calculateRemainingIncome();
+        IncomeModel incomeData = IncomeModel(
+          expenses: totalExpenses.value,
+        );
+        await db
+            .collection('expense_analytics')
+            .doc(auth.currentUser!.uid)
+            .update(incomeData.toJson());
+        debugPrint(totalExpenses.value.toString());
+      } else {
+        totalExpenses.value = 0.0;
+      }
+      update();
+    } catch (e) {
+      print('Error calculating total expenses: $e');
+    }
+  }
+
+  //Fetch all transaction of the user
+  Future<List<TransactionModel>> fetchAllTransaction() async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
+        .instance
+        .collection('transactions')
+        .doc(auth.currentUser!.uid)
+        .collection('add_transaction')
+        .get();
+
+    return querySnapshot.docs
+        .map((document) => TransactionModel.fromJson(document.data()))
+        .toList();
+  }
+
+  // fetch USD real time update exchange price for PKR
+  void fetchExchangeRate() async {
+    final response =
+        await http.get(Uri.parse('https://open.er-api.com/v6/latest/USD'));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      pkrValue = data['rates']['PKR'];
+      update();
+    } else {
+      debugPrint('Failed to fetch data: ${response.statusCode}');
+    }
+  }
+
+  double convertPkrToUsd(double amountInPkr) {
+    return amountInPkr / double.parse(pkrValue.toStringAsFixed(1));
   }
 
   void calculateRemainingIncome() {
     remainingIncome.value = totalIncome.value - totalExpenses.value;
-  }
-
-  double convertTotalIncomeToUsd() {
-    return convertPkrToUsd(totalIncome.value);
-  }
-
-  // Conversion function for totalExpenses
-  double convertTotalExpensesToUsd() {
-    return convertPkrToUsd(totalExpenses.value);
-  }
-
-  // Conversion function for remainingIncome
-  double convertRemainingIncomeToUsd() {
-    return convertPkrToUsd(remainingIncome.value);
   }
 }

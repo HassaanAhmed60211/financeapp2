@@ -1,16 +1,12 @@
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/custom_elevated.dart';
-import 'package:finance_track_app/core/widgets/spaces_widget.dart';
-import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
-import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
 import 'package:finance_track_app/ui/financial_goals/goal_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-TextEditingController updatesavings = TextEditingController();
-GoalController controllergoal = Get.put(GoalController());
-
 Future<void> showUpdateGoalDialog(context, index, text) async {
+  TextEditingController updatesavings = TextEditingController();
+  GoalController controllergoal = Get.put(GoalController());
   updatesavings.text = text;
   await showDialog(
     context: context,

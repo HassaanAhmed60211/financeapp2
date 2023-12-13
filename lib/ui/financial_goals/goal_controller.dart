@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:finance_track_app/core/Model/data_model.dart';
 import 'package:get/get.dart';
 
 class GoalController extends GetxController {
