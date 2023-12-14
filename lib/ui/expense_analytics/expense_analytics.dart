@@ -60,10 +60,10 @@ class ExpenseAnalytics extends StatelessWidget {
                     child: GetBuilder<DashboardController>(
                       builder: (controller) {
                         return chartToRun(
-                            controller.perExpense,
-                            controller.perSaving,
-                            controller.time,
-                            controller.perIncome);
+                            controller.dataAnalytics?.perExpense ?? '',
+                            controller.dataAnalytics?.perSaving ?? '',
+                            controller.dataAnalytics?.time ?? '',
+                            controller.dataAnalytics?.perIncome ?? '');
                       },
                     )),
               ]),

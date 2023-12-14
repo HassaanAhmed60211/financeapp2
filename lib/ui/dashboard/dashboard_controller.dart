@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finance_track_app/core/Model/expense_model.dart';
 import 'package:finance_track_app/core/Model/income_model.dart';
 import 'package:finance_track_app/core/Model/transaction_model.dart';
+import 'package:finance_track_app/ui/expense_analytics/expense_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -20,6 +22,7 @@ class DashboardController extends GetxController {
   RxDouble totalExpensesInUsd = 0.0.obs;
   RxDouble remainingIncomeInUsd = 0.0.obs;
   List<String> time = <String>[];
+  ExpenseAnalyticsModel? dataAnalytics;
   List<double> perExpense = <double>[];
   List<double> perSaving = <double>[];
   List<String> perIncome = <String>[];
@@ -38,8 +41,22 @@ class DashboardController extends GetxController {
 
     fetchExchangeRate();
     totalIncome.value = incomeData['income'];
+    for (var i = 5; i > 0; i--) {
+      int val = totalIncome.value ~/ i;
+      perIncome.add(val.toString());
+    }
     remainingIncome.value = incomeData['savings'];
+
     calculateTotalExpenses();
+    var expenseGraph =
+        await db.collection('expense_graph').doc(auth.currentUser!.uid).get();
+
+    dataAnalytics = ExpenseAnalyticsModel(
+        perExpense: expenseGraph['perExpense'],
+        perIncome: expenseGraph['perIncome'],
+        perSaving: expenseGraph['perSaving'],
+        time: expenseGraph['time']);
+    update();
   }
 
 //Add transaction in firebase
@@ -71,6 +88,15 @@ class DashboardController extends GetxController {
     calculateTotalExpenses();
     calculateRemainingIncome();
     perSaving.add(remainingIncome.value);
+    dataAnalytics = ExpenseAnalyticsModel(
+        perExpense: perExpense,
+        time: time,
+        perSaving: perSaving,
+        perIncome: perIncome);
+    await db
+        .collection('expense_graph')
+        .doc(auth.currentUser!.uid)
+        .set(dataAnalytics!.toJson());
     update();
   }
 
@@ -92,6 +118,7 @@ class DashboardController extends GetxController {
           'price': price,
         });
       }
+
       calculateTotalExpenses();
       calculateRemainingIncome();
       fetchAllTransaction();
