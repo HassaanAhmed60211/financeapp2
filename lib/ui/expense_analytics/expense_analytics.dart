@@ -13,6 +13,7 @@ class ExpenseAnalytics extends StatelessWidget {
   ExpenseAnalytics({super.key});
   final ThemeController _themeController = Get.put(ThemeController());
   DashboardController dashboardController = Get.put(DashboardController());
+
   @override
   Widget build(BuildContext context) {
     var date = DateTime.now();
@@ -59,11 +60,27 @@ class ExpenseAnalytics extends StatelessWidget {
                     width: Get.width,
                     child: GetBuilder<DashboardController>(
                       builder: (controller) {
-                        return chartToRun(
-                            controller.dataAnalytics?.perExpense ?? '',
-                            controller.dataAnalytics?.perSaving ?? '',
-                            controller.dataAnalytics?.time ?? '',
-                            controller.dataAnalytics?.perIncome ?? '');
+                        List<double> perExpenseDouble = controller
+                            .dataAnalytics!.perExpense!
+                            .map((dynamic item) => item is int
+                                ? item.toDouble()
+                                : double.tryParse(item.toString()) ?? 0.0)
+                            .toList();
+                        List<double> perSavingDouble = controller
+                            .dataAnalytics!.perSaving!
+                            .map((dynamic item) => item is int
+                                ? item.toDouble()
+                                : double.tryParse(item.toString()) ?? 0.0)
+                            .toList();
+                        List<String> timeData = controller.dataAnalytics!.time!
+                            .map((dynamic item) => item.toString())
+                            .toList();
+                        List<String> incomeData = controller
+                            .dataAnalytics!.perIncome!
+                            .map((dynamic item) => item.toString())
+                            .toList();
+                        return chartToRun(perExpenseDouble, perSavingDouble,
+                            timeData, incomeData);
                       },
                     )),
               ]),
@@ -73,54 +90,55 @@ class ExpenseAnalytics extends StatelessWidget {
   }
 
   Widget chartToRun(chart1, chart2, time, perincome) {
-    if (dashboardController.time.isEmpty ||
-        dashboardController.perExpense.isEmpty ||
-        dashboardController.perSaving.isEmpty) {
-      return Center(
-          child: Text(
-        'No Expenses available',
-        style: TextStyle(
-          color: _themeController.isDarkMode.value
-              ? ColorConstraint().primaryColor
-              : ColorConstraint().secondaryColor,
-        ),
-      ));
-    }
+    return GetBuilder<DashboardController>(builder: (controller) {
+      if (controller.dataAnalytics?.time == null ||
+          controller.dataAnalytics?.perSaving == null) {
+        return Center(
+            child: Text(
+          'No Expenses available',
+          style: TextStyle(
+            color: _themeController.isDarkMode.value
+                ? ColorConstraint().primaryColor
+                : ColorConstraint().secondaryColor,
+          ),
+        ));
+      }
 
-    try {
-      LabelLayoutStrategy? xContainerLabelLayoutStrategy;
-      ChartData chartData;
-      ChartOptions chartOptions = const ChartOptions();
+      try {
+        LabelLayoutStrategy? xContainerLabelLayoutStrategy;
+        ChartData chartData;
+        ChartOptions chartOptions = const ChartOptions();
 
-      chartOptions = const ChartOptions(
-        dataContainerOptions: DataContainerOptions(
-          startYAxisAtDataMinRequested: true,
-        ),
-      );
+        chartOptions = const ChartOptions(
+          dataContainerOptions: DataContainerOptions(
+            startYAxisAtDataMinRequested: true,
+          ),
+        );
 
-      chartData = ChartData(
-        dataRows: [chart1, chart2],
-        yUserLabels: perincome,
-        xUserLabels: time,
-        dataRowsLegends: const ['Expenses', 'Savings'],
-        chartOptions: chartOptions,
-      );
+        chartData = ChartData(
+          dataRows: [chart1, chart2],
+          yUserLabels: perincome,
+          xUserLabels: time,
+          dataRowsLegends: const ['Expenses', 'Savings'],
+          chartOptions: chartOptions,
+        );
 
-      var lineChartContainer = LineChartTopContainer(
-        chartData: chartData,
-        xContainerLabelLayoutStrategy: xContainerLabelLayoutStrategy,
-      );
+        var lineChartContainer = LineChartTopContainer(
+          chartData: chartData,
+          xContainerLabelLayoutStrategy: xContainerLabelLayoutStrategy,
+        );
 
-      var lineChart = LineChart(
-        painter: LineChartPainter(
-          lineChartContainer: lineChartContainer,
-        ),
-      );
+        var lineChart = LineChart(
+          painter: LineChartPainter(
+            lineChartContainer: lineChartContainer,
+          ),
+        );
 
-      return lineChart;
-    } catch (e) {
-      print('Error in chartToRun: $e');
-      return const Text('Error generating chart');
-    }
+        return lineChart;
+      } catch (e) {
+        print('Error in chartToRun: $e');
+        return const Text('Error generating chart');
+      }
+    });
   }
 }

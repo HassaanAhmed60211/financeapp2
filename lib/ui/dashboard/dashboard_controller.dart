@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance_track_app/core/Model/expense_model.dart';
 import 'package:finance_track_app/core/Model/income_model.dart';
 import 'package:finance_track_app/core/Model/transaction_model.dart';
-import 'package:finance_track_app/ui/expense_analytics/expense_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -56,6 +55,7 @@ class DashboardController extends GetxController {
         perIncome: expenseGraph['perIncome'],
         perSaving: expenseGraph['perSaving'],
         time: expenseGraph['time']);
+
     update();
   }
 
@@ -88,11 +88,18 @@ class DashboardController extends GetxController {
     calculateTotalExpenses();
     calculateRemainingIncome();
     perSaving.add(remainingIncome.value);
-    dataAnalytics = ExpenseAnalyticsModel(
-        perExpense: perExpense,
-        time: time,
-        perSaving: perSaving,
-        perIncome: perIncome);
+    debugPrint(dataAnalytics?.perExpense.toString());
+    dataAnalytics?.perExpense?.add(
+      double.tryParse(newData['price'] ?? '0.0') ?? 0.0,
+    );
+    dataAnalytics?.perSaving?.add(
+      remainingIncome.value,
+    );
+    dataAnalytics?.time?.add(
+      newData['time'],
+    );
+
+    debugPrint(dataAnalytics?.perExpense.toString());
     await db
         .collection('expense_graph')
         .doc(auth.currentUser!.uid)
@@ -174,6 +181,9 @@ class DashboardController extends GetxController {
           .collection('expense_analytics')
           .doc(auth.currentUser!.uid)
           .set(incomeData.toJson());
+      await db.collection('expense_graph').doc(auth.currentUser!.uid).update({
+        'perIncome': perIncome,
+      });
       update();
     }
   }
@@ -245,5 +255,15 @@ class DashboardController extends GetxController {
 
   void calculateRemainingIncome() {
     remainingIncome.value = totalIncome.value - totalExpenses.value;
+  }
+
+  void addDataToModel(
+    double newPerExpense,
+    double newPerSaving,
+    String newTime,
+  ) {
+    dataAnalytics?.perExpense?.add(newPerExpense);
+    dataAnalytics?.perSaving?.add(newPerSaving);
+    dataAnalytics?.time?.add(newTime);
   }
 }

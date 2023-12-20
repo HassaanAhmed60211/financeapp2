@@ -10,7 +10,7 @@ class ExpenseAnalyticsModel {
   List<dynamic>? perIncome;
   List<dynamic>? perExpense;
   List<dynamic>? perSaving;
-  List<String>? time;
+  List<dynamic>? time;
 
   ExpenseAnalyticsModel({
     this.perIncome,
