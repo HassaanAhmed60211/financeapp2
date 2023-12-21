@@ -52,7 +52,7 @@ Future<void> showAddDialog(context) async {
                       if (totalIncomeVal > double.parse(expenseprice.text)) {
                         controllerdash.addData(
                             expensename.text, expenseprice.text, context);
-                        print(controllerdash.textData);
+
                         expensename.clear();
                         expenseprice.clear();
                         Navigator.pop(context);

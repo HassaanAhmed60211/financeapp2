@@ -33,7 +33,7 @@ Future<void> showIncomeDialog(context) async {
                   customElevetedBtn(() {
                     controllerdash
                         .updateIncome(double.tryParse(incomecontroller.text));
-                    print(controllerdash.textData);
+
                     incomecontroller.clear();
                     Navigator.pop(context);
                   }, 'Add', 20)

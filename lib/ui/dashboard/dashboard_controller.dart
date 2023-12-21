@@ -20,12 +20,14 @@ class DashboardController extends GetxController {
   RxDouble totalIncomeInUsd = 0.0.obs;
   RxDouble totalExpensesInUsd = 0.0.obs;
   RxDouble remainingIncomeInUsd = 0.0.obs;
+  List<dynamic> pExpense = <dynamic>[];
+  List<dynamic> pSaving = <dynamic>[];
+  List<dynamic> title = <dynamic>[];
+  List<dynamic> timing = <dynamic>[];
   List<String> time = <String>[];
   ExpenseAnalyticsModel? dataAnalytics;
-  List<double> perExpense = <double>[];
-  List<double> perSaving = <double>[];
   List<String> perIncome = <String>[];
-  List<Map<String, dynamic>> textData = [];
+
   double remainingSavings = 0.0;
   double pkrValue = 0.0;
 
@@ -69,41 +71,60 @@ class DashboardController extends GetxController {
       'time': DateFormat.MMMMd().format(date),
       'month': DateFormat.MMMM().format(date),
     };
-    if (textData.isNotEmpty &&
-        newData['month'] != textData[textData.length - 1]['month']) {
-      time.clear();
-      perExpense.clear();
-      perSaving.clear();
-    }
-    textData.add(newData);
-    time.add(newData['time']);
-    perExpense.add(double.tryParse(newData['price'] ?? '0.0') ?? 0.0);
-
+    // added on transaction ended
     await db
         .collection('transactions')
         .doc(auth.currentUser!.uid)
         .collection('add_transaction')
         .add(newData);
+    //=======================================
 
     calculateTotalExpenses();
     calculateRemainingIncome();
-    perSaving.add(remainingIncome.value);
-    debugPrint(dataAnalytics?.perExpense.toString());
-    dataAnalytics?.perExpense?.add(
-      double.tryParse(newData['price'] ?? '0.0') ?? 0.0,
-    );
-    dataAnalytics?.perSaving?.add(
-      remainingIncome.value,
-    );
-    dataAnalytics?.time?.add(
-      newData['time'],
-    );
 
-    debugPrint(dataAnalytics?.perExpense.toString());
+    //=======================================
+    // Added expense graph
+
     await db
         .collection('expense_graph')
         .doc(auth.currentUser!.uid)
-        .set(dataAnalytics!.toJson());
+        .get()
+        .then((docu) async {
+      // if data exist so update the data
+      if (docu.exists) {
+        dataAnalytics?.perExpense?.add(
+          double.tryParse(newData['price'] ?? '0.0') ?? 0.0,
+        );
+        dataAnalytics?.perSaving?.add(
+          remainingIncome.value,
+        );
+        dataAnalytics?.time?.add(
+          newData['time'],
+        );
+        dataAnalytics?.title?.add(
+          newData['text'],
+        );
+
+        await db
+            .collection('expense_graph')
+            .doc(auth.currentUser!.uid)
+            .update(dataAnalytics!.toJson());
+      } else {
+        //else it set data inside user doc id
+        pExpense.add(double.tryParse(newData['price'] ?? '0.0') ?? 0.0);
+        pSaving.add(remainingIncome.value);
+        title.add(newData['text']);
+        time.add(newData['time']);
+        dataAnalytics = ExpenseAnalyticsModel(
+            perExpense: pExpense, perSaving: pSaving, time: time, title: title);
+
+        await db
+            .collection('expense_graph')
+            .doc(auth.currentUser!.uid)
+            .set(dataAnalytics!.toJson());
+      }
+    });
+
     update();
   }
 

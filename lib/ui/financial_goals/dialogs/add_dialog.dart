@@ -70,7 +70,7 @@ Future<void> showAddGoalDialog(context) async {
                     } else {
                       controller.addData(goalname.text, goalcurrentsaving.text,
                           goaltotalsaving.text);
-                      print(controllerdash.textData);
+
                       goalname.clear();
                       goalcurrentsaving.clear();
                       goaltotalsaving.clear();

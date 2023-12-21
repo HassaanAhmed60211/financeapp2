@@ -36,14 +36,7 @@ Widget customTransContainer(context) {
               }, 'Add', 20)
             ],
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: controllerdash.textData.length,
-            itemBuilder: (context, index) {
-              return Container();
-            },
-          ),
+          
           GetBuilder<DashboardController>(builder: (controller) {
             return FutureBuilder<List<TransactionModel>>(
               future: controller.fetchAllTransaction(),
@@ -51,7 +44,7 @@ Widget customTransContainer(context) {
                   (context, AsyncSnapshot<List<TransactionModel>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return SizedBox(
-                    height: Get.height*0.5,
+                    height: Get.height * 0.5,
                     child: const Center(
                       child: CircularProgressIndicator(
                         color: ColorConstraint.primaryLightColor,

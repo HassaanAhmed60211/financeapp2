@@ -7,12 +7,14 @@ String expenseAnalyticsModelToJson(ExpenseAnalyticsModel data) =>
     json.encode(data.toJson());
 
 class ExpenseAnalyticsModel {
+  List<dynamic>? title;
   List<dynamic>? perIncome;
   List<dynamic>? perExpense;
   List<dynamic>? perSaving;
   List<dynamic>? time;
 
   ExpenseAnalyticsModel({
+    this.title,
     this.perIncome,
     this.perExpense,
     this.perSaving,
@@ -20,6 +22,9 @@ class ExpenseAnalyticsModel {
   });
   factory ExpenseAnalyticsModel.fromJson(Map<String, dynamic> json) =>
       ExpenseAnalyticsModel(
+        title: json["title"] == null
+            ? []
+            : List<String>.from(json["title"]!.map((x) => x.toString())),
         perIncome: json["perIncome"] == null
             ? []
             : List<String>.from(json["perIncome"]!.map((x) => x.toString())),
@@ -39,6 +44,7 @@ class ExpenseAnalyticsModel {
       );
 
   Map<String, dynamic> toJson() => {
+        "title": title == null ? [] : List<dynamic>.from(title!.map((x) => x)),
         "perIncome": perIncome == null
             ? []
             : List<dynamic>.from(perIncome!.map((x) => x)),
