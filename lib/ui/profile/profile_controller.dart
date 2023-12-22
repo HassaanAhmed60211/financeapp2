@@ -44,7 +44,7 @@ class ProfileController extends GetxController {
     return users.doc(user!.uid).update({'imageUrl': imageUrl.value});
   }
 
-    Future<void> updateName(text) {
+  Future<void> updateName(text) {
     return users.doc(user!.uid).update({'name': text});
   }
 }

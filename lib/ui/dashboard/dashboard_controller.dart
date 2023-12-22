@@ -205,6 +205,7 @@ class DashboardController extends GetxController {
       await db.collection('expense_graph').doc(auth.currentUser!.uid).update({
         'perIncome': perIncome,
       });
+
       update();
     }
   }
@@ -274,8 +275,26 @@ class DashboardController extends GetxController {
     return amountInPkr / double.parse(pkrValue.toStringAsFixed(1));
   }
 
-  void calculateRemainingIncome() {
+  void calculateRemainingIncome() async {
     remainingIncome.value = totalIncome.value - totalExpenses.value;
+    DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+        await FirebaseFirestore.instance
+            .collection('expense_analytics')
+            .doc(auth.currentUser!.uid)
+            .get();
+    if (documentSnapshot.exists) {
+      remainingIncome.value = documentSnapshot.get('income') ??
+          0.0 - documentSnapshot.get('expenses') ??
+          0.0;
+    }
+    calculateRemainingIncome();
+    IncomeModel incomeData = IncomeModel(
+      savings: remainingIncome.value,
+    );
+    await db
+        .collection('expense_analytics')
+        .doc(auth.currentUser!.uid)
+        .update(incomeData.toJson());
   }
 
   void addDataToModel(

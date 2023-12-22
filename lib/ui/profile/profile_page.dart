@@ -87,8 +87,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                       : CircleAvatar(
                                           backgroundColor: Colors.transparent,
                                           radius: 80,
-                                          backgroundImage:
-                                              NetworkImage(imageUrl),
+                                          backgroundImage: NetworkImage(
+                                              'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352634/ijfy0uytq6rbmt1qpgtp.png'),
                                         ),
                                 ),
                               );

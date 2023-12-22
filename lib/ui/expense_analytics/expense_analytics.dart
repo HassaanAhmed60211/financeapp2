@@ -91,11 +91,24 @@ class ExpenseAnalytics extends StatelessWidget {
 
   Widget chartToRun(chart1, chart2, time, perincome) {
     return GetBuilder<DashboardController>(builder: (controller) {
-      if (controller.dataAnalytics?.time == null ||
-          controller.dataAnalytics?.perSaving == null) {
+      debugPrint(controller.dataAnalytics?.perIncome.toString());
+      if (controller.dataAnalytics!.time!.isEmpty ||
+          controller.dataAnalytics!.perSaving!.isEmpty) {
         return Center(
             child: Text(
           'No Expenses available',
+          style: TextStyle(
+            color: _themeController.isDarkMode.value
+                ? ColorConstraint().primaryColor
+                : ColorConstraint().secondaryColor,
+          ),
+        ));
+      } else if (controller.dataAnalytics!.time!.isNotEmpty &&
+          controller.dataAnalytics!.perIncome!.isEmpty &&
+          controller.dataAnalytics!.perSaving!.isNotEmpty) {
+        return Center(
+            child: Text(
+          'Update your income',
           style: TextStyle(
             color: _themeController.isDarkMode.value
                 ? ColorConstraint().primaryColor
@@ -136,7 +149,6 @@ class ExpenseAnalytics extends StatelessWidget {
 
         return lineChart;
       } catch (e) {
-        print('Error in chartToRun: $e');
         return const Text('Error generating chart');
       }
     });
