@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finance_track_app/core/Model/income_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,26 @@ class ProfileController extends GetxController {
   CollectionReference users = FirebaseFirestore.instance.collection('user');
   final user = FirebaseAuth.instance.currentUser;
   bool isVal = false;
+  final db = FirebaseFirestore.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
+  IncomeModel? data;
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+  }
+
+  updateAnalytics() async {
+    var incomeData = await db
+        .collection('expense_analytics')
+        .doc(auth.currentUser!.uid)
+        .get();
+    data = IncomeModel(
+        expenses: incomeData['expenses'],
+        income: incomeData['income'],
+        savings: incomeData['savings']);
+    update();
+  }
 
   void setImagePath(XFile? path) async {
     imagePaths = path;

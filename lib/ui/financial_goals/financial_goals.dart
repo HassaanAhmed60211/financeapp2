@@ -49,7 +49,7 @@ class _FinancialGoalsState extends State<FinancialGoals> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Spaces().midh(),
+                Spaces.mid,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,7 +68,7 @@ class _FinancialGoalsState extends State<FinancialGoals> {
                     }, 'Add', 20)
                   ],
                 ),
-                Spaces().midh(),
+                Spaces.mid,
                 goalList(),
               ],
             ),

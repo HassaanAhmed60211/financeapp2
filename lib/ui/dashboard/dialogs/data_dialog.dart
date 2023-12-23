@@ -32,7 +32,7 @@ Future<void> showAddDialog(context) async {
                             borderSide:
                                 BorderSide(color: Colors.black38, width: 1))),
                   ),
-                  Spaces().midh(),
+                  Spaces.mid,
                   TextFormField(
                     controller: expenseprice,
                     keyboardType: TextInputType.number,

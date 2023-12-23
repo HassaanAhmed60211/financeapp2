@@ -13,7 +13,7 @@ Widget customTextWidget(
       color: colortext ?? Colors.black,
       fontWeight: textfontweight ?? FontWeight.w500,
       fontSize: textfontsize ?? 18,
-      fontFamily: GoogleFonts.dmSans().fontFamily,
+      fontFamily: GoogleFonts.inter().fontFamily,
     ),
   );
 }
@@ -31,8 +31,9 @@ Widget customTextWidgetWithDecoration(
       color: colortext ?? Colors.black,
       fontWeight: textfontweight ?? FontWeight.w500,
       fontSize: textfontsize ?? 18,
-      fontFamily: GoogleFonts.dmSans().fontFamily,
+      fontFamily: GoogleFonts.inter().fontFamily,
       decoration: decoration ?? TextDecoration.none,
+      decorationColor: Color(0xff4F3D56),
     ),
   );
 }

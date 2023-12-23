@@ -41,7 +41,7 @@ class ExpenseAnalytics extends StatelessWidget {
                           FontWeight.w700,
                           32),
                     ),
-                    Spaces().midw(),
+                    Spaces.midw,
                     Padding(
                       padding: const EdgeInsets.only(bottom: 3),
                       child: customTextWidget(
@@ -54,7 +54,7 @@ class ExpenseAnalytics extends StatelessWidget {
                     ),
                   ],
                 ),
-                Spaces().largeh(),
+                Spaces.largeh,
                 SizedBox(
                     height: Get.height * 0.65,
                     width: Get.width,

@@ -92,7 +92,7 @@ Widget customTransContainer(context) {
                                             context, index, text, price);
                                       },
                                     ),
-                                    Spaces().smallh(),
+                                    Spaces.smallh,
                                     IconButton(
                                       icon: const Icon(Icons.delete),
                                       onPressed: () {

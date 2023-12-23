@@ -33,7 +33,7 @@ Future<void> showUpdateDialog(context, index, text, price) async {
                             borderSide:
                                 BorderSide(color: Colors.black38, width: 1))),
                   ),
-                  Spaces().midh(),
+                  Spaces.mid,
                   TextFormField(
                     controller: expenseprice,
                     style: const TextStyle(color: Colors.black),

@@ -6,6 +6,7 @@ import 'package:finance_track_app/ui/bottom_nav/bottom_nav.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
 import 'package:finance_track_app/ui/dashboard/dialogs/income_dialogs.dart';
+import 'package:finance_track_app/ui/profile/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -73,7 +74,7 @@ Widget customTrackContainer(context) {
               ],
             ),
           ),
-          Spaces().largeh(),
+          Spaces.largeh,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -85,15 +86,17 @@ Widget customTrackContainer(context) {
                     width: 40,
                     child: Image.asset('assets/svgviewer-png-output (1).png'),
                   ),
-                  Obx(
-                    () => customTextWidget(
-                        controllerdash.convertToPKR.value
-                            ? "\$${controllerdash.convertPkrToUsd(double.parse(controllerdash.totalExpenses.toString())).toStringAsFixed(2)}"
-                            : "Rs.${controllerdash.totalExpenses.toString()}",
-                        const Color(0xffE53935),
-                        FontWeight.w800,
-                        14),
-                  ),
+                  GetBuilder<ProfileController>(builder: (controller) {
+                    return Obx(
+                      () => customTextWidget(
+                          controllerdash.convertToPKR.value
+                              ? "\$${controllerdash.convertPkrToUsd(double.parse(controller.data?.expenses.toString() ?? '0.0')).toStringAsFixed(2)}"
+                              : "Rs.${controllerdash.totalExpenses.toString()}",
+                          const Color(0xffE53935),
+                          FontWeight.w800,
+                          14),
+                    );
+                  }),
                   customTextWidget(
                       'Expenses', const Color(0xff212121), FontWeight.w400, 16),
                 ],

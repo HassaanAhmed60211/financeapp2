@@ -15,6 +15,7 @@ class SignupController extends GetxController {
 
       // Now, get the current user
       final user = auth.currentUser;
+      debugPrint(user.toString());
 
       if (user != null) {
         await addUser(UserModel(userid: user.uid, name: name, email: email));
@@ -49,10 +50,18 @@ class SignupController extends GetxController {
           email: User.email,
           name: User.name,
         );
+        debugPrint(uuserr.name.toString());
+
+        // Print the document ID you're trying to set
+        debugPrint('Document ID: ${user.uid}');
+
         await datauser.doc(user.uid).set(uuserr.toMap());
+
+        // Print a message after setting the document
+        debugPrint('User document added successfully.');
       }
     } catch (e) {
-      print('Error adding item: $e');
+      print('Error adding user document: $e');
     }
   }
 }

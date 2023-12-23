@@ -13,7 +13,7 @@ class MyBottomNavBar extends StatelessWidget {
         backgroundColor: Colors.grey[100],
         body: Obx(() {
           debugPrint("update screen");
-          return bnc.pages[ bnc.currentIndex.value];
+          return bnc.pages[bnc.currentIndex.value];
         }),
         bottomNavigationBar: SafeArea(
           child: Padding(
@@ -41,7 +41,7 @@ class MyBottomNavBar extends StatelessWidget {
                         index: 0,
                         text: 'Dashboard'),
                   ),
-                  Spaces().midw(),
+                  Spaces.midw,
                   Flexible(
                     child: customBottomNavBarChildContainer(
                       controller: bnc,
@@ -51,7 +51,7 @@ class MyBottomNavBar extends StatelessWidget {
                       text: 'Financial Goals',
                     ),
                   ),
-                  Spaces().midw(),
+                  Spaces.midw,
                   Flexible(
                     child: customBottomNavBarChildContainer(
                         controller: bnc,
@@ -59,7 +59,7 @@ class MyBottomNavBar extends StatelessWidget {
                         index: 2,
                         text: 'Expense Analytics'),
                   ),
-                  Spaces().midw(),
+                  Spaces.midw,
                   Flexible(
                     child: customBottomNavBarChildContainer(
                         controller: bnc,

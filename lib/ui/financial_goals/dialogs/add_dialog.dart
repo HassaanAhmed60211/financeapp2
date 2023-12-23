@@ -33,7 +33,7 @@ Future<void> showAddGoalDialog(context) async {
                             borderSide:
                                 BorderSide(color: Colors.black38, width: 1))),
                   ),
-                  Spaces().midh(),
+                  Spaces.mid,
                   TextFormField(
                     controller: goalcurrentsaving,
                     keyboardType: TextInputType.number,
@@ -45,7 +45,7 @@ Future<void> showAddGoalDialog(context) async {
                             borderSide:
                                 BorderSide(color: Colors.black38, width: 1))),
                   ),
-                  Spaces().midh(),
+                  Spaces.mid,
                   TextFormField(
                     controller: goaltotalsaving,
                     keyboardType: TextInputType.number,

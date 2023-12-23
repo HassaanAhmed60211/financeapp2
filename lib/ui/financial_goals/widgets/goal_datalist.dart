@@ -112,7 +112,7 @@ Widget goalList() {
                           ),
                         ),
                       ),
-                      Spaces().midh(),
+                      Spaces.mid,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

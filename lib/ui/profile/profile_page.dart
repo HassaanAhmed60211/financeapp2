@@ -52,8 +52,8 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Spaces().largeh(),
-              Spaces().largeh(),
+              Spaces.largeh,
+              Spaces.largeh,
               Center(
                 child: Stack(
                   children: [
@@ -68,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             color: Colors.blue,
                           );
                         } else if (snapshot.hasData) {
-                          String imageUrl = snapshot.data!['imageUrl'];
+                          String imageUrl = snapshot.data?['imageUrl'];
 
                           return GetBuilder<ProfileController>(
                             builder: (controller) {
@@ -87,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       : CircleAvatar(
                                           backgroundColor: Colors.transparent,
                                           radius: 80,
-                                          backgroundImage: NetworkImage(
+                                          backgroundImage: NetworkImage(imageUrl ??
                                               'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352634/ijfy0uytq6rbmt1qpgtp.png'),
                                         ),
                                 ),
@@ -154,8 +154,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         width: Get.width,
                         child: Column(
                           children: [
-                            Spaces().largeh(),
-                            Spaces().largeh(),
+                            Spaces.largeh,
+                            Spaces.largeh,
                             customTextWidget(
                                 snapshot.data!['email'],
                                 _themeController.isDarkMode.value
@@ -163,7 +163,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     : ColorConstraint().secondaryColor,
                                 FontWeight.w800,
                                 21),
-                            Spaces().largeh(),
+                            Spaces.largeh,
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

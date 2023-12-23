@@ -7,11 +7,13 @@ Widget customTextField(controller, hinttext, bool? value) {
     obscureText: value ?? false,
     decoration: InputDecoration(
       hintText: hinttext,
-      hintStyle: TextStyle(color: Colors.black87),
-      enabledBorder:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      hintStyle:
+          TextStyle(color: Color(0xff78828A), fontWeight: FontWeight.w400),
+      enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xffECF1F6))),
       focusedBorder:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
     ),
   );
 }

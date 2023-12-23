@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ColorConstraint {
-  Color? primaryColor = Colors.white;
-  Color? secondaryColor = Colors.grey[900];
+  Color? primaryColor = Color(0xffFDFDFD);
+  Color? secondaryColor = Color(0xff1F2C37);
   Color? backColor = Colors.blue[900];
   static const whiteColor = Colors.white;
 

@@ -73,15 +73,15 @@ class _DashboardPageState extends State<DashboardPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Spaces().largeh(),
+                Spaces.largeh,
                 Obx(() => customTrackContainer(context)),
-                Spaces().midh(),
+                Spaces.mid,
                 Obx(
                   () {
                     return customGraphChart();
                   },
                 ),
-                Spaces().midh(),
+                Spaces.mid,
                 Obx(
                   () => customTransContainer(context),
                 ),
