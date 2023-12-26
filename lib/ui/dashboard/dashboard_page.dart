@@ -76,15 +76,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 Spaces.largeh,
                 Obx(() => customTrackContainer(context)),
                 Spaces.mid,
-                Obx(
-                  () {
-                    return customGraphChart();
-                  },
-                ),
+                customGraphChart(),
                 Spaces.mid,
-                Obx(
-                  () => customTransContainer(context),
-                ),
+                customTransContainer(context),
               ],
             ),
           ),

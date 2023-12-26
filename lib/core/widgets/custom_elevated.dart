@@ -14,3 +14,15 @@ Widget customElevetedBtn(onpressed, text, double? fontsize) {
             text, ColorConstraint().primaryColor, FontWeight.w500, fontsize)),
   );
 }
+
+Widget customElevetedBtnWid(onpressed, text, double? fontsize, double wid) {
+  return SizedBox(
+    width: wid,
+    height: 40,
+    child: ElevatedButton(
+        style: TextButton.styleFrom(backgroundColor: const Color(0xff4F3D56)),
+        onPressed: onpressed,
+        child: customTextWidget(
+            text, ColorConstraint().primaryColor, FontWeight.w500, fontsize)),
+  );
+}

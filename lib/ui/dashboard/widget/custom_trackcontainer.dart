@@ -6,6 +6,7 @@ import 'package:finance_track_app/ui/bottom_nav/bottom_nav.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
 import 'package:finance_track_app/ui/dashboard/dialogs/income_dialogs.dart';
+import 'package:finance_track_app/ui/dashboard/dialogs/update_dialog.dart';
 import 'package:finance_track_app/ui/profile/profile_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ final ThemeController _themeController = Get.put(ThemeController());
 final _auth = FirebaseAuth.instance;
 DashboardController controllerdash = Get.put(DashboardController());
 BottomNavBarController bottomNavController = Get.put(BottomNavBarController());
+
 Widget customTrackContainer(context) {
   return Container(
     width: Get.width,
@@ -43,10 +45,11 @@ Widget customTrackContainer(context) {
                   child: const Text(
                     'VIEW EXPENSE ANALYTICS',
                     style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        decoration: TextDecoration.underline),
+                      color: Colors.black,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
                 Obx(() => SizedBox(
@@ -86,64 +89,80 @@ Widget customTrackContainer(context) {
                     width: 40,
                     child: Image.asset('assets/svgviewer-png-output (1).png'),
                   ),
-                  GetBuilder<ProfileController>(builder: (controller) {
-                    return Obx(
-                      () => customTextWidget(
-                          controllerdash.convertToPKR.value
-                              ? "\$${controllerdash.convertPkrToUsd(double.parse(controller.data?.expenses.toString() ?? '0.0')).toStringAsFixed(2)}"
-                              : "Rs.${controllerdash.totalExpenses.toString()}",
-                          const Color(0xffE53935),
-                          FontWeight.w800,
-                          14),
+                  GetBuilder<DashboardController>(builder: (controller) {
+                    final expenses = controller.totalExpenses;
+                    return customTextWidget(
+                      controllerdash.convertToPKR.value
+                          ? "\$${controllerdash.convertPkrToUsd(controller.totalExpenses).toStringAsFixed(2)}"
+                          : "Rs.${controller.totalExpenses.toString()}",
+                      const Color(0xffE53935),
+                      FontWeight.w800,
+                      14,
                     );
                   }),
                   customTextWidget(
-                      'Expenses', const Color(0xff212121), FontWeight.w400, 16),
+                    'Expenses',
+                    const Color(0xff212121),
+                    FontWeight.w400,
+                    16,
+                  ),
                 ],
               ),
               Column(
                 children: [
                   SizedBox(
-                      height: 40,
-                      width: 40,
-                      child:
-                          Image.asset('assets/svgviewer-png-output (2).png')),
-                  Obx(
-                    () => GestureDetector(
+                    height: 40,
+                    width: 40,
+                    child: Image.asset('assets/svgviewer-png-output (2).png'),
+                  ),
+                  GetBuilder<DashboardController>(builder: (controller) {
+                    final totalIncome = controller.totalIncome;
+                    return GestureDetector(
                       onTap: () {
                         showIncomeDialog(context);
                       },
                       child: customTextWidget(
-                          controllerdash.convertToPKR.value
-                              ? "\$${controllerdash.convertPkrToUsd(double.parse(controllerdash.totalIncome.toString())).toStringAsFixed(2)}"
-                              : "Rs.${controllerdash.totalIncome.toString()}",
-                          const Color(0xff00897B),
-                          FontWeight.w800,
-                          14),
-                    ),
-                  ),
+                        controllerdash.convertToPKR.value
+                            ? "\$${controllerdash.convertPkrToUsd(controller.totalIncome).toStringAsFixed(2)}"
+                            : "Rs.${controller.totalIncome.toString()}",
+                        const Color(0xff00897B),
+                        FontWeight.w800,
+                        14,
+                      ),
+                    );
+                  }),
                   customTextWidget(
-                      'Income', const Color(0xff212121), FontWeight.w400, 16),
+                    'Income',
+                    const Color(0xff212121),
+                    FontWeight.w400,
+                    16,
+                  ),
                 ],
               ),
               Column(
                 children: [
                   SizedBox(
-                      height: 40,
-                      width: 40,
-                      child:
-                          Image.asset('assets/svgviewer-png-output (3).png')),
-                  Obx(
-                    () => customTextWidget(
-                        controllerdash.convertToPKR.value
-                            ? "\$${controllerdash.convertPkrToUsd(double.parse(controllerdash.remainingIncome.toString())).toStringAsFixed(2)}"
-                            : "Rs.${controllerdash.remainingIncome.toString()}",
-                        const Color(0xff212121),
-                        FontWeight.w800,
-                        14),
+                    height: 40,
+                    width: 40,
+                    child: Image.asset('assets/svgviewer-png-output (3).png'),
                   ),
+                  GetBuilder<DashboardController>(builder: (controller) {
+                    final remainingIncome = controller.remainingIncome;
+                    return customTextWidget(
+                      controllerdash.convertToPKR.value
+                          ? "\$${controllerdash.convertPkrToUsd(controller.remainingIncome).toStringAsFixed(2)}"
+                          : "Rs.${controller.remainingIncome.toString()}",
+                      const Color(0xff212121),
+                      FontWeight.w800,
+                      14,
+                    );
+                  }),
                   customTextWidget(
-                      'Savings', const Color(0xff212121), FontWeight.w400, 16),
+                    'Savings',
+                    const Color(0xff212121),
+                    FontWeight.w400,
+                    16,
+                  ),
                 ],
               ),
             ],

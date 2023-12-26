@@ -20,77 +20,83 @@ class LoginView extends StatelessWidget {
         automaticallyImplyLeading: false,
         backgroundColor: ColorConstraint().primaryColor,
         centerTitle: true,
-        title:
-            customTextWidget('Sign In', Color(0xff1F2C37), FontWeight.w600, 18),
+        title: customTextWidget(
+            'Sign In', const Color(0xff1F2C37), FontWeight.w600, 18),
       ),
       backgroundColor: ColorConstraint().primaryColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Spaces.large,
-            Spaces.smallh,
-            Align(
-              alignment: Alignment.topLeft,
-              child: customTextWidget('Hi, Welcome Back! 👋',
-                  ColorConstraint().secondaryColor, FontWeight.w700, 24),
-            ),
-            Spaces.smallh,
-            Align(
-              alignment: Alignment.topLeft,
-              child: customTextWidget('Login and track your finance condition',
-                  Color(0xff78828A), FontWeight.w400, 14),
-            ),
-            Spaces.large,
-            Spaces.large,
-            Align(
-              alignment: Alignment.topLeft,
-              child: customTextWidget('Email Address',
-                  ColorConstraint().secondaryColor, FontWeight.w700, 14),
-            ),
-            Spaces.smallh,
-            customTextField(emailcontroller, 'Enter your email address', false),
-            Spaces.mid,
-            Align(
-              alignment: Alignment.topLeft,
-              child: customTextWidget('Password',
-                  ColorConstraint().secondaryColor, FontWeight.w700, 14),
-            ),
-            Spaces.smallh,
-            customTextField(passcontroller, 'Enter your password', true),
-            Spaces.mid,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                customTextWidget("Don't have an account?",
-                    ColorConstraint().secondaryColor, FontWeight.w500, 18),
-                Spaces.smallew,
-                GestureDetector(
-                  onTap: () {
-                    Get.to(SignupView());
-                  },
-                  child: customTextWidgetWithDecoration(
-                      "Signup",
-                      Color(0xff4F3D56),
-                      FontWeight.w800,
-                      18,
-                      TextDecoration.underline),
-                ),
-              ],
-            ),
-            Spaces.large,
-            customElevetedBtn(
-              () {
-                controller.userLogin(
-                    emailcontroller.text, passcontroller.text, context);
-              },
-              'Login',
-              19,
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Spaces.large,
+              Spaces.smallh,
+              Align(
+                alignment: Alignment.topLeft,
+                child: customTextWidget('Hi, Welcome Back! 👋',
+                    ColorConstraint().secondaryColor, FontWeight.w700, 24),
+              ),
+              Spaces.smallh,
+              Align(
+                alignment: Alignment.topLeft,
+                child: customTextWidget(
+                    'Login and track your finance condition',
+                    const Color(0xff78828A),
+                    FontWeight.w400,
+                    14),
+              ),
+              Spaces.large,
+              Spaces.large,
+              Align(
+                alignment: Alignment.topLeft,
+                child: customTextWidget('Email Address',
+                    ColorConstraint().secondaryColor, FontWeight.w700, 14),
+              ),
+              Spaces.smallh,
+              customTextField(
+                  emailcontroller, 'Enter your email address', false),
+              Spaces.mid,
+              Align(
+                alignment: Alignment.topLeft,
+                child: customTextWidget('Password',
+                    ColorConstraint().secondaryColor, FontWeight.w700, 14),
+              ),
+              Spaces.smallh,
+              customTextField(passcontroller, 'Enter your password', true),
+              Spaces.mid,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  customTextWidget("Don't have an account?",
+                      ColorConstraint().secondaryColor, FontWeight.w500, 18),
+                  Spaces.smallew,
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(SignupView());
+                    },
+                    child: customTextWidgetWithDecoration(
+                        "Signup",
+                        const Color(0xff4F3D56),
+                        FontWeight.w800,
+                        18,
+                        TextDecoration.underline),
+                  ),
+                ],
+              ),
+              Spaces.large,
+              customElevetedBtn(
+                () {
+                  controller.userLogin(
+                      emailcontroller.text, passcontroller.text, context);
+                },
+                'Login',
+                19,
+              ),
+            ],
+          ),
         ),
       ),
     );

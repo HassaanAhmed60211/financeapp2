@@ -56,65 +56,47 @@ class ExpenseAnalytics extends StatelessWidget {
                 ),
                 Spaces.largeh,
                 SizedBox(
-                    height: Get.height * 0.65,
-                    width: Get.width,
-                    child: GetBuilder<DashboardController>(
-                      builder: (controller) {
-                        List<double> perExpenseDouble = controller
-                            .dataAnalytics!.perExpense!
-                            .map((dynamic item) => item is int
-                                ? item.toDouble()
-                                : double.tryParse(item.toString()) ?? 0.0)
-                            .toList();
-                        List<double> perSavingDouble = controller
-                            .dataAnalytics!.perSaving!
-                            .map((dynamic item) => item is int
-                                ? item.toDouble()
-                                : double.tryParse(item.toString()) ?? 0.0)
-                            .toList();
-                        List<String> timeData = controller.dataAnalytics!.time!
-                            .map((dynamic item) => item.toString())
-                            .toList();
-                        List<String> incomeData = controller
-                            .dataAnalytics!.perIncome!
-                            .map((dynamic item) => item.toString())
-                            .toList();
-                        return chartToRun(perExpenseDouble, perSavingDouble,
-                            timeData, incomeData);
-                      },
-                    )),
+                  height: Get.height * 0.65,
+                  width: Get.width,
+                  child: chartToRun(),
+                ),
               ]),
             ),
           ),
         ));
   }
 
-  Widget chartToRun(chart1, chart2, time, perincome) {
+  Widget chartToRun() {
     return GetBuilder<DashboardController>(builder: (controller) {
-      debugPrint(controller.dataAnalytics?.perIncome.toString());
-      if (controller.dataAnalytics!.time!.isEmpty ||
-          controller.dataAnalytics!.perSaving!.isEmpty) {
+      final perIncome = controller.dataAnalytics?.perIncome;
+      final timeData = controller.dataAnalytics?.time;
+      final perExpense = controller.dataAnalytics?.perExpense;
+      final perSaving = controller.dataAnalytics?.perSaving;
+
+      if (timeData == null || perSaving == null) {
         return Center(
-            child: Text(
-          'No Expenses available',
-          style: TextStyle(
-            color: _themeController.isDarkMode.value
-                ? ColorConstraint().primaryColor
-                : ColorConstraint().secondaryColor,
+          child: Text(
+            'No Expenses available',
+            style: TextStyle(
+              color: _themeController.isDarkMode.value
+                  ? ColorConstraint().primaryColor
+                  : ColorConstraint().secondaryColor,
+            ),
           ),
-        ));
-      } else if (controller.dataAnalytics!.time!.isNotEmpty &&
-          controller.dataAnalytics!.perIncome!.isEmpty &&
-          controller.dataAnalytics!.perSaving!.isNotEmpty) {
+        );
+      } else if (timeData.isNotEmpty &&
+          perIncome == null &&
+          perSaving.isNotEmpty) {
         return Center(
-            child: Text(
-          'Update your income',
-          style: TextStyle(
-            color: _themeController.isDarkMode.value
-                ? ColorConstraint().primaryColor
-                : ColorConstraint().secondaryColor,
+          child: Text(
+            'Update your income',
+            style: TextStyle(
+              color: _themeController.isDarkMode.value
+                  ? ColorConstraint().primaryColor
+                  : ColorConstraint().secondaryColor,
+            ),
           ),
-        ));
+        );
       }
 
       try {
@@ -129,9 +111,22 @@ class ExpenseAnalytics extends StatelessWidget {
         );
 
         chartData = ChartData(
-          dataRows: [chart1, chart2],
-          yUserLabels: perincome,
-          xUserLabels: time,
+          dataRows: [
+            perExpense
+                    ?.map((item) => item is int
+                        ? item.toDouble()
+                        : double.tryParse(item.toString()) ?? 0.0)
+                    .toList() ??
+                [],
+            perSaving
+                    .map((item) => item is int
+                        ? item.toDouble()
+                        : double.tryParse(item.toString()) ?? 0.0)
+                    .toList() ??
+                [],
+          ],
+          yUserLabels: perIncome?.map((item) => item.toString()).toList() ?? [],
+          xUserLabels: timeData.map((item) => item.toString()).toList(),
           dataRowsLegends: const ['Expenses', 'Savings'],
           chartOptions: chartOptions,
         );

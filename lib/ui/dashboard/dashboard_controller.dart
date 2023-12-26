@@ -14,9 +14,9 @@ class DashboardController extends GetxController {
   RxBool convertToPKR = false.obs; // Track the selected currency
   final db = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  RxDouble totalExpenses = 0.0.obs;
-  RxDouble totalIncome = 0.0.obs;
-  RxDouble remainingIncome = 0.0.obs;
+  double totalExpenses = 0.0;
+  double totalIncome = 0.0;
+  double remainingIncome = 0.0;
   RxDouble totalIncomeInUsd = 0.0.obs;
   RxDouble totalExpensesInUsd = 0.0.obs;
   RxDouble remainingIncomeInUsd = 0.0.obs;
@@ -27,6 +27,7 @@ class DashboardController extends GetxController {
   List<String> time = <String>[];
   ExpenseAnalyticsModel? dataAnalytics;
   List<String> perIncome = <String>[];
+  IncomeModel? data;
 
   double remainingSavings = 0.0;
   double pkrValue = 0.0;
@@ -41,12 +42,14 @@ class DashboardController extends GetxController {
         .get();
 
     fetchExchangeRate();
-    totalIncome.value = incomeData['income'];
+    totalExpenses = incomeData['expenses'];
+    totalIncome = incomeData['income'];
     for (var i = 5; i > 0; i--) {
-      int val = totalIncome.value ~/ i;
+      int val = totalIncome ~/ i;
       perIncome.add(val.toString());
     }
-    remainingIncome.value = incomeData['savings'];
+    update();
+    remainingIncome = incomeData['savings'];
 
     calculateTotalExpenses();
     var expenseGraph =
@@ -81,7 +84,6 @@ class DashboardController extends GetxController {
 
     calculateTotalExpenses();
     calculateRemainingIncome();
-
     //=======================================
     // Added expense graph
 
@@ -96,7 +98,7 @@ class DashboardController extends GetxController {
           double.tryParse(newData['price'] ?? '0.0') ?? 0.0,
         );
         dataAnalytics?.perSaving?.add(
-          remainingIncome.value,
+          remainingIncome,
         );
         dataAnalytics?.time?.add(
           newData['time'],
@@ -112,7 +114,7 @@ class DashboardController extends GetxController {
       } else {
         //else it set data inside user doc id
         pExpense.add(double.tryParse(newData['price'] ?? '0.0') ?? 0.0);
-        pSaving.add(remainingIncome.value);
+        pSaving.add(remainingIncome);
         title.add(newData['text']);
         time.add(newData['time']);
         dataAnalytics = ExpenseAnalyticsModel(
@@ -184,20 +186,22 @@ class DashboardController extends GetxController {
   // update income and it update on firebase
   void updateIncome(double? income) async {
     if (income != null) {
-      totalIncome.value = income;
-      debugPrint(totalIncome.value.toString());
+      totalIncome = income;
+      debugPrint(totalIncome.toString());
+      update();
       perIncome.clear();
 
       for (var i = 5; i > 0; i--) {
-        int val = totalIncome.value ~/ i;
+        int val = totalIncome ~/ i;
         perIncome.add(val.toString());
       }
       calculateTotalExpenses();
       calculateRemainingIncome();
       IncomeModel incomeData = IncomeModel(
         income: income,
-        savings: remainingIncome.value,
+        savings: remainingIncome,
       );
+      update();
       await db
           .collection('expense_analytics')
           .doc(auth.currentUser!.uid)
@@ -221,21 +225,21 @@ class DashboardController extends GetxController {
               .get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        totalExpenses.value = querySnapshot.docs
+        totalExpenses = querySnapshot.docs
             .map((document) =>
                 double.tryParse(document['price'] ?? '0.0') ?? 0.0)
             .fold(0.0, (previous, current) => previous + current);
         calculateRemainingIncome();
         IncomeModel incomeData = IncomeModel(
-          expenses: totalExpenses.value,
+          expenses: totalExpenses,
         );
         await db
             .collection('expense_analytics')
             .doc(auth.currentUser!.uid)
             .update(incomeData.toJson());
-        debugPrint(totalExpenses.value.toString());
+        debugPrint(totalExpenses.toString());
       } else {
-        totalExpenses.value = 0.0;
+        totalExpenses = 0.0;
       }
       update();
     } catch (e) {
@@ -244,17 +248,17 @@ class DashboardController extends GetxController {
   }
 
   //Fetch all transaction of the user
-  Future<List<TransactionModel>> fetchAllTransaction() async {
-    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
-        .instance
+  Stream<List<TransactionModel>> fetchAllTransaction() {
+    return FirebaseFirestore.instance
         .collection('transactions')
         .doc(auth.currentUser!.uid)
         .collection('add_transaction')
-        .get();
-
-    return querySnapshot.docs
-        .map((document) => TransactionModel.fromJson(document.data()))
-        .toList();
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs
+          .map((document) => TransactionModel.fromJson(document.data()))
+          .toList();
+    });
   }
 
   // fetch USD real time update exchange price for PKR
@@ -276,21 +280,22 @@ class DashboardController extends GetxController {
   }
 
   void calculateRemainingIncome() async {
-    remainingIncome.value = totalIncome.value - totalExpenses.value;
+    remainingIncome = totalIncome - totalExpenses;
     DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
         await FirebaseFirestore.instance
             .collection('expense_analytics')
             .doc(auth.currentUser!.uid)
             .get();
     if (documentSnapshot.exists) {
-      remainingIncome.value = documentSnapshot.get('income') ??
+      remainingIncome = documentSnapshot.get('income') ??
           0.0 - documentSnapshot.get('expenses') ??
           0.0;
     }
     calculateRemainingIncome();
     IncomeModel incomeData = IncomeModel(
-      savings: remainingIncome.value,
+      savings: remainingIncome,
     );
+    update();
     await db
         .collection('expense_analytics')
         .doc(auth.currentUser!.uid)

@@ -14,23 +14,23 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
   final ThemeController _themeController = Get.put(ThemeController());
   final ImagePickerUtil imagePickerUtil = ImagePickerUtil();
   ProfileController controller = Get.put(ProfileController());
-  late Stream<DocumentSnapshot<Map<String, dynamic>>> personnalData;
+  late Stream<DocumentSnapshot<Map<String, dynamic>>> personalData;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     final user = FirebaseAuth.instance.currentUser;
-    personnalData = FirebaseFirestore.instance
+    personalData = FirebaseFirestore.instance
         .collection('user')
         .doc(user!.uid)
         .snapshots();
@@ -44,31 +44,42 @@ class _ProfilePageState extends State<ProfilePage> {
             ? Colors.black87
             : ColorConstraint().primaryColor,
         appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(70),
-            child: GlobalAppBar1('MY PROFILE')),
+          preferredSize: const Size.fromHeight(70),
+          child: GlobalAppBar1('MY PROFILE'),
+        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Spaces.largeh,
-              Spaces.largeh,
+              Spaces.large,
+              Spaces.large,
               Center(
                 child: Stack(
                   children: [
                     StreamBuilder<DocumentSnapshot>(
-                      stream: personnalData,
+                      stream: FirebaseFirestore.instance
+                          .collection('user')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .snapshots(),
                       builder: (BuildContext context,
                           AsyncSnapshot<DocumentSnapshot> snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          // Show a loading indicator while the data is being fetched
                           return const CircularProgressIndicator(
                             color: Colors.blue,
                           );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
                         } else if (snapshot.hasData) {
-                          String imageUrl = snapshot.data?['imageUrl'];
+                          String imageUrl = snapshot.data?['imageUrl'] ??
+                              'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352634/ijfy0uytq6rbmt1qpgtp.png';
+
+                          if (imageUrl.isEmpty) {
+                            imageUrl =
+                                'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352634/ijfy0uytq6rbmt1qpgtp.png';
+                          }
 
                           return GetBuilder<ProfileController>(
                             builder: (controller) {
@@ -78,24 +89,25 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: CircleAvatar(
                                   radius: 80,
                                   backgroundColor: Colors.grey.shade300,
-                                  backgroundImage:
-                                      const AssetImage('assets/loading.gif'),
                                   child: controller.isVal
                                       ? Container(
-                                          color: Colors.transparent,
+                                          child:
+                                              const CircularProgressIndicator(
+                                            color: Colors.blue,
+                                          ),
                                         )
                                       : CircleAvatar(
                                           backgroundColor: Colors.transparent,
                                           radius: 80,
-                                          backgroundImage: NetworkImage(imageUrl ??
-                                              'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352634/ijfy0uytq6rbmt1qpgtp.png'),
+                                          backgroundImage:
+                                              NetworkImage(imageUrl),
                                         ),
                                 ),
                               );
                             },
                           );
                         } else {
-                          return Container(); // Handle the case when there is no data
+                          return Container();
                         }
                       },
                     ),
@@ -108,91 +120,101 @@ class _ProfilePageState extends State<ProfilePage> {
                           if (image != null) {
                             controller.setImagePath(image);
                             controller.isValue();
-                            Timer(Duration(seconds: 17), () {
+                            Timer(const Duration(seconds: 4), () {
                               controller.isNotValue();
                             });
                           }
                         },
                         child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 3,
+                              color: Colors.white,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(
+                                50,
+                              ),
+                            ),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                offset: const Offset(2, 4),
+                                color: Colors.black.withOpacity(
+                                  0.3,
+                                ),
+                                blurRadius: 3,
+                              ),
+                            ],
+                          ),
                           child: const Padding(
                             padding: EdgeInsets.all(2.0),
-                            child: Icon(Icons.add_a_photo,
-                                color: ColorConstraint.primaryLightColor),
+                            child: Icon(
+                              Icons.add_a_photo,
+                              color: ColorConstraint.primaryLightColor,
+                            ),
                           ),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 3,
-                                color: Colors.white,
-                              ),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(
-                                  50,
-                                ),
-                              ),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  offset: Offset(2, 4),
-                                  color: Colors.black.withOpacity(
-                                    0.3,
-                                  ),
-                                  blurRadius: 3,
-                                ),
-                              ]),
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
+              Spaces.large,
               StreamBuilder<DocumentSnapshot>(
-                  stream: personnalData,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    if (snapshot.hasData) {
-                      return SizedBox(
-                        width: Get.width,
-                        child: Column(
-                          children: [
-                            Spaces.largeh,
-                            Spaces.largeh,
-                            customTextWidget(
-                                snapshot.data!['email'],
+                stream: personalData,
+                builder: (BuildContext context,
+                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    return SizedBox(
+                      width: Get.width,
+                      child: Column(
+                        children: [
+                          Spaces.largeh,
+                          Spaces.largeh,
+                          customTextWidget(
+                            snapshot.data!['email'],
+                            _themeController.isDarkMode.value
+                                ? ColorConstraint().primaryColor
+                                : ColorConstraint().secondaryColor,
+                            FontWeight.w800,
+                            21,
+                          ),
+                          Spaces.largeh,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              customTextWidget(
+                                snapshot.data!['name'],
                                 _themeController.isDarkMode.value
                                     ? ColorConstraint().primaryColor
-                                    : ColorConstraint().secondaryColor,
+                                    : ColorConstraint.primaryLightColor,
                                 FontWeight.w800,
-                                21),
-                            Spaces.largeh,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                customTextWidget(
+                                21,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  showBottomInfoProfile(
+                                    context,
                                     snapshot.data!['name'],
-                                    _themeController.isDarkMode.value
-                                        ? ColorConstraint().primaryColor
-                                        : ColorConstraint.primaryLightColor,
-                                    FontWeight.w800,
-                                    21),
-                                IconButton(
-                                    onPressed: () {
-                                      showBottomInfoProfile(
-                                          context, snapshot.data!['name']);
-                                    },
-                                    icon: Icon(
-                                      Icons.edit,
-                                      color: _themeController.isDarkMode.value
-                                          ? ColorConstraint().primaryColor
-                                          : ColorConstraint.primaryLightColor,
-                                    ))
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return const CircularProgressIndicator();
-                  }),
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: _themeController.isDarkMode.value
+                                      ? ColorConstraint().primaryColor
+                                      : ColorConstraint.primaryLightColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return const CircularProgressIndicator();
+                },
+              ),
               const SizedBox(
                 height: 70,
               ),

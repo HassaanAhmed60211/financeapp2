@@ -10,7 +10,7 @@ TextEditingController expensename = TextEditingController();
 TextEditingController expenseprice = TextEditingController();
 DashboardController dashboardController = Get.put(DashboardController());
 Future<void> showAddDialog(context) async {
-  var totalIncomeVal = dashboardController.totalIncome.value;
+  var totalIncomeVal = dashboardController.totalIncome;
   await showDialog(
     context: context,
     builder: (BuildContext context) {

@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class FinancialGoals extends StatefulWidget {
-  FinancialGoals({super.key});
+  const FinancialGoals({super.key});
 
   @override
   State<FinancialGoals> createState() => _FinancialGoalsState();
@@ -63,9 +63,9 @@ class _FinancialGoalsState extends State<FinancialGoals> {
                           FontWeight.w700,
                           15),
                     ),
-                    customElevetedBtn(() {
+                    customElevetedBtnWid(() {
                       showAddGoalDialog(context);
-                    }, 'Add', 20)
+                    }, 'Add', 20, 100)
                   ],
                 ),
                 Spaces.mid,
