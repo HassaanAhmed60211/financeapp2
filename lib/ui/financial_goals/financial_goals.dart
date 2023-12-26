@@ -59,7 +59,7 @@ class _FinancialGoalsState extends State<FinancialGoals> {
                           'SET YOUR GOALS',
                           _themeController.isDarkMode.value
                               ? ColorConstraint().primaryColor
-                              : ColorConstraint().secondaryColor,
+                              : ColorConstraint.secondaryColor,
                           FontWeight.w700,
                           15),
                     ),

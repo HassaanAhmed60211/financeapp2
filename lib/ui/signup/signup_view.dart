@@ -21,7 +21,7 @@ class SignupView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
-          color: ColorConstraint().secondaryColor, //change your color here
+          color: ColorConstraint.secondaryColor, //change your color here
         ),
         backgroundColor: ColorConstraint().primaryColor,
         centerTitle: true,
@@ -41,7 +41,7 @@ class SignupView extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: customTextWidget('Create Account',
-                    ColorConstraint().secondaryColor, FontWeight.w700, 24),
+                    ColorConstraint.secondaryColor, FontWeight.w700, 24),
               ),
               Spaces.smallh,
               Align(
@@ -57,7 +57,7 @@ class SignupView extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: customTextWidget('Full Name',
-                    ColorConstraint().secondaryColor, FontWeight.w700, 14),
+                    ColorConstraint.secondaryColor, FontWeight.w700, 14),
               ),
               Spaces.smallh,
               customTextField(namecontroller, 'Enter your name', false),
@@ -65,7 +65,7 @@ class SignupView extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: customTextWidget('Email Address',
-                    ColorConstraint().secondaryColor, FontWeight.w700, 14),
+                    ColorConstraint.secondaryColor, FontWeight.w700, 14),
               ),
               Spaces.smallh,
               customTextField(
@@ -74,7 +74,7 @@ class SignupView extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: customTextWidget('Password',
-                    ColorConstraint().secondaryColor, FontWeight.w700, 14),
+                    ColorConstraint.secondaryColor, FontWeight.w700, 14),
               ),
               Spaces.smallh,
               customTextField(passcontroller, 'Enter your password', false),
@@ -84,7 +84,7 @@ class SignupView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   customTextWidget("Already have an account?",
-                      ColorConstraint().secondaryColor, FontWeight.w500, 18),
+                      ColorConstraint.secondaryColor, FontWeight.w500, 18),
                   Spaces.smallew,
                   GestureDetector(
                     onTap: () {

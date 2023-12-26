@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 final ThemeController _themeController = Get.put(ThemeController());
-final _auth = FirebaseAuth.instance;
 DashboardController controllerdash = Get.put(DashboardController());
 BottomNavBarController bottomNavController = Get.put(BottomNavBarController());
 
@@ -90,11 +89,10 @@ Widget customTrackContainer(context) {
                     child: Image.asset('assets/svgviewer-png-output (1).png'),
                   ),
                   GetBuilder<DashboardController>(builder: (controller) {
-                    final expenses = controller.totalExpenses;
                     return customTextWidget(
                       controllerdash.convertToPKR.value
-                          ? "\$${controllerdash.convertPkrToUsd(controller.totalExpenses).toStringAsFixed(2)}"
-                          : "Rs.${controller.totalExpenses.toString()}",
+                          ? "\$${controllerdash.convertPkrToUsd(controller.data?.expenses ?? 0.0).toStringAsFixed(2)}"
+                          : "Rs.${controller.data?.expenses ?? 0.0}",
                       const Color(0xffE53935),
                       FontWeight.w800,
                       14,
@@ -116,15 +114,14 @@ Widget customTrackContainer(context) {
                     child: Image.asset('assets/svgviewer-png-output (2).png'),
                   ),
                   GetBuilder<DashboardController>(builder: (controller) {
-                    final totalIncome = controller.totalIncome;
                     return GestureDetector(
                       onTap: () {
                         showIncomeDialog(context);
                       },
                       child: customTextWidget(
                         controllerdash.convertToPKR.value
-                            ? "\$${controllerdash.convertPkrToUsd(controller.totalIncome).toStringAsFixed(2)}"
-                            : "Rs.${controller.totalIncome.toString()}",
+                            ? "\$${controllerdash.convertPkrToUsd(controller.data?.income ?? 0.0).toStringAsFixed(2)}"
+                            : "Rs.${controller.data?.income ?? 0.0}",
                         const Color(0xff00897B),
                         FontWeight.w800,
                         14,
@@ -147,11 +144,10 @@ Widget customTrackContainer(context) {
                     child: Image.asset('assets/svgviewer-png-output (3).png'),
                   ),
                   GetBuilder<DashboardController>(builder: (controller) {
-                    final remainingIncome = controller.remainingIncome;
                     return customTextWidget(
                       controllerdash.convertToPKR.value
-                          ? "\$${controllerdash.convertPkrToUsd(controller.remainingIncome).toStringAsFixed(2)}"
-                          : "Rs.${controller.remainingIncome.toString()}",
+                          ? "\$${controllerdash.convertPkrToUsd(controller.data?.savings ?? 0.0).toStringAsFixed(2)}"
+                          : "Rs.${controller.data?.savings ?? 0.0}",
                       const Color(0xff212121),
                       FontWeight.w800,
                       14,

@@ -36,7 +36,7 @@ class LoginView extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: customTextWidget('Hi, Welcome Back! 👋',
-                    ColorConstraint().secondaryColor, FontWeight.w700, 24),
+                    ColorConstraint.secondaryColor, FontWeight.w700, 24),
               ),
               Spaces.smallh,
               Align(
@@ -52,7 +52,7 @@ class LoginView extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: customTextWidget('Email Address',
-                    ColorConstraint().secondaryColor, FontWeight.w700, 14),
+                    ColorConstraint.secondaryColor, FontWeight.w700, 14),
               ),
               Spaces.smallh,
               customTextField(
@@ -61,7 +61,7 @@ class LoginView extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: customTextWidget('Password',
-                    ColorConstraint().secondaryColor, FontWeight.w700, 14),
+                    ColorConstraint.secondaryColor, FontWeight.w700, 14),
               ),
               Spaces.smallh,
               customTextField(passcontroller, 'Enter your password', true),
@@ -71,7 +71,7 @@ class LoginView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   customTextWidget("Don't have an account?",
-                      ColorConstraint().secondaryColor, FontWeight.w500, 18),
+                      ColorConstraint.secondaryColor, FontWeight.w500, 18),
                   Spaces.smallew,
                   GestureDetector(
                     onTap: () {

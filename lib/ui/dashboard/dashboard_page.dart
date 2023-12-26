@@ -74,7 +74,7 @@ class _DashboardPageState extends State<DashboardPage> {
             child: Column(
               children: [
                 Spaces.largeh,
-                Obx(() => customTrackContainer(context)),
+                customTrackContainer(context),
                 Spaces.mid,
                 customGraphChart(),
                 Spaces.mid,

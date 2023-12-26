@@ -9,10 +9,13 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Color(0xff201937)),
+      decoration: const BoxDecoration(color: Color(0xff201937)),
       height: Get.height,
       width: Get.width,
-      child: SvgPicture.asset('assets/splash_screen.svg'),
+      child: SvgPicture.asset(
+        'assets/svg/splash_screen.svg',
+        fit: BoxFit.fitWidth,
+      ),
     );
   }
 }

@@ -1,114 +1,70 @@
 import 'package:finance_track_app/core/utils.dart';
-import 'package:finance_track_app/core/widgets/spaces_widget.dart';
+import 'package:finance_track_app/ui/Home.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
+import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:water_drop_nav_bar/water_drop_nav_bar.dart';
 
-class MyBottomNavBar extends StatelessWidget {
-  final BottomNavBarController bnc = Get.put(BottomNavBarController());
-  MyBottomNavBar({super.key});
+class MyBottomNavBar extends StatefulWidget {
+  const MyBottomNavBar({Key? key}) : super(key: key);
+
+  @override
+  State<MyBottomNavBar> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyBottomNavBar> {
+  /// Controller to handle PageView and also handles initial page
+  final _pageController = PageController(initialPage: 0);
+  int selectedIndex = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  final controller = Get.put(BottomNavBarController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[100],
-        body: Obx(() {
-          debugPrint("update screen");
-          return bnc.pages[bnc.currentIndex.value];
-        }),
-        bottomNavigationBar: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-
-              decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  )), // alignment: Alignment.bottomCenter,
-              // color: Colors.red,
-              // margin: EdgeInsets.only(top: Get.height - 45),
-              height: 65,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Flexible(
-                    child: customBottomNavBarChildContainer(
-                        controller: bnc,
-                        icon: Icons.home,
-                        index: 0,
-                        text: 'Dashboard'),
-                  ),
-                  Spaces.midw,
-                  Flexible(
-                    child: customBottomNavBarChildContainer(
-                      controller: bnc,
-                      // icon: FontAwesome.circle_info,
-                      icon: Icons.money,
-                      index: 1,
-                      text: 'Financial Goals',
-                    ),
-                  ),
-                  Spaces.midw,
-                  Flexible(
-                    child: customBottomNavBarChildContainer(
-                        controller: bnc,
-                        icon: Icons.analytics,
-                        index: 2,
-                        text: 'Expense Analytics'),
-                  ),
-                  Spaces.midw,
-                  Flexible(
-                    child: customBottomNavBarChildContainer(
-                        controller: bnc,
-                        icon: Icons.person,
-                        index: 3,
-                        text: 'Profile'),
-                  ),
-                ],
-              ),
-            ),
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _pageController,
+        children: controller.bottomBarPages, // Use the list of pages here
+      ),
+      bottomNavigationBar: WaterDropNavBar(
+        backgroundColor: Colors.cyan,
+        onItemSelected: (int index) {
+          setState(() {
+            selectedIndex = index;
+          });
+          _pageController.animateToPage(
+            selectedIndex,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOutQuad,
+          );
+        },
+        selectedIndex: selectedIndex,
+        barItems: <BarItem>[
+          BarItem(
+            filledIcon: Icons.bookmark_rounded,
+            outlinedIcon: Icons.bookmark_border_rounded,
           ),
-        ));
+          BarItem(
+              filledIcon: Icons.favorite_rounded,
+              outlinedIcon: Icons.favorite_border_rounded),
+          BarItem(
+            filledIcon: Icons.email_rounded,
+            outlinedIcon: Icons.email_outlined,
+          ),
+          BarItem(
+            filledIcon: Icons.folder_rounded,
+            outlinedIcon: Icons.folder_outlined,
+          ),
+        ],
+      ),
+    );
   }
-}
-// import 'package:flutter_svg/flutter_svg.dart';
-
-Widget customBottomNavBarChildContainer({
-  required String text,
-  required dynamic icon,
-  required int index,
-  required BottomNavBarController controller,
-}) {
-  return GestureDetector(
-    onTap: () {
-      controller.currentIndex(index);
-    },
-    child: Obx(
-      () {
-        bool isSelected = controller.currentIndex.value == index;
-        return Container(
-          decoration: BoxDecoration(
-            color: isSelected
-                ? ColorConstraint.primaryLightColor
-                : const Color(0xffDBEBF6),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          width: isSelected ? 55 : 55,
-          height: isSelected ? 55 : 55,
-          child: Center(
-            child: Icon(
-              icon,
-              size: isSelected ? 29 : 29,
-              color: isSelected
-                  ? ColorConstraint.whiteColor
-                  : ColorConstraint.primaryLightColor.withOpacity(.7),
-            ),
-          ),
-        );
-      },
-    ),
-  );
 }

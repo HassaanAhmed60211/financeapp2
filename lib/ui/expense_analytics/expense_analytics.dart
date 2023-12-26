@@ -48,7 +48,7 @@ class ExpenseAnalytics extends StatelessWidget {
                           'Analytics',
                           _themeController.isDarkMode.value
                               ? ColorConstraint().primaryColor
-                              : ColorConstraint().secondaryColor,
+                              : ColorConstraint.secondaryColor,
                           FontWeight.w600,
                           20),
                     ),
@@ -80,7 +80,7 @@ class ExpenseAnalytics extends StatelessWidget {
             style: TextStyle(
               color: _themeController.isDarkMode.value
                   ? ColorConstraint().primaryColor
-                  : ColorConstraint().secondaryColor,
+                  : ColorConstraint.secondaryColor,
             ),
           ),
         );
@@ -93,7 +93,7 @@ class ExpenseAnalytics extends StatelessWidget {
             style: TextStyle(
               color: _themeController.isDarkMode.value
                   ? ColorConstraint().primaryColor
-                  : ColorConstraint().secondaryColor,
+                  : ColorConstraint.secondaryColor,
             ),
           ),
         );

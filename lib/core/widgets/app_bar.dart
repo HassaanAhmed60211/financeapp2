@@ -61,7 +61,7 @@ Widget GlobalAppBar(_userStream, text) {
             text,
             _themeController.isDarkMode.value
                 ? ColorConstraint().primaryColor
-                : ColorConstraint().secondaryColor,
+                : ColorConstraint.secondaryColor,
             FontWeight.w800,
             19),
       ),
@@ -114,7 +114,7 @@ Widget GlobalAppBar1(text) {
             text,
             _themeController.isDarkMode.value
                 ? ColorConstraint().primaryColor
-                : ColorConstraint().secondaryColor,
+                : ColorConstraint.secondaryColor,
             FontWeight.w800,
             19),
       ),

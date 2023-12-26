@@ -10,7 +10,7 @@ TextEditingController expensename = TextEditingController();
 TextEditingController expenseprice = TextEditingController();
 DashboardController dashboardController = Get.put(DashboardController());
 Future<void> showAddDialog(context) async {
-  var totalIncomeVal = dashboardController.totalIncome;
+  var totalIncomeVal = dashboardController.data!.income;
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -49,7 +49,7 @@ Future<void> showAddDialog(context) async {
                   ),
                   Builder(builder: (context) {
                     return customElevetedBtn(() {
-                      if (totalIncomeVal > double.parse(expenseprice.text)) {
+                      if (totalIncomeVal! > double.parse(expenseprice.text)) {
                         controllerdash.addData(
                             expensename.text, expenseprice.text, context);
 

@@ -9,17 +9,17 @@ Widget customGraphChart() {
     data: [
       GraphSeries(
         label: 'Income',
-        price: double.parse(controllerdash.totalIncome.toString()),
+        price: double.parse(controllerdash.data?.income.toString() ?? '0.0'),
         barColor: charts.ColorUtil.fromDartColor(Colors.green),
       ),
       GraphSeries(
         label: 'Expenses',
-        price: double.parse(controllerdash.totalExpenses.toString()),
+        price: double.parse(controllerdash.data?.expenses.toString() ?? '0.0'),
         barColor: charts.ColorUtil.fromDartColor(Colors.red),
       ),
       GraphSeries(
         label: 'Savings',
-        price: double.parse(controllerdash.remainingIncome.toString()),
+        price: double.parse(controllerdash.data?.savings.toString() ?? '0.0'),
         barColor: charts.ColorUtil.fromDartColor(Colors.blueGrey),
       ),
     ],

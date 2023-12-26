@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 class ColorConstraint {
   Color? primaryColor = Color(0xffFDFDFD);
-  Color? secondaryColor = Color(0xff1F2C37);
+ static const secondaryColor = Color(0xff1F2C37);
   Color? backColor = Colors.blue[900];
   static const whiteColor = Colors.white;
 
