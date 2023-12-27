@@ -61,6 +61,7 @@ dependencies:
   flutter_local_notifications: ^16.1.0
   onboarding: ^3.1.0
   water_drop_nav_bar: ^2.2.0+5
+  font_awesome_x: ^10.5.1
 
 dev_dependencies:
   flutter_test:

@@ -18,36 +18,43 @@ Widget GlobalAppBar(_userStream, text) {
     backgroundColor: Colors.transparent,
     leading: Padding(
       padding: const EdgeInsets.only(top: 10, left: 10),
-      child: CircleAvatar(
-        backgroundColor: Colors.grey[200],
-        child: StreamBuilder<DocumentSnapshot>(
-          stream: _userStream,
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Something went wrong');
-            }
+      child: InkWell(
+        onTap: () {},
+        child: CircleAvatar(
+          backgroundColor: const Color(0xff4F3D56),
+          child: StreamBuilder<DocumentSnapshot>(
+            stream: _userStream,
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Something went wrong');
+              }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Icon(
-                Icons.person,
-                color: Colors.black45,
-              );
-            }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Icon(
+                  Icons.person,
+                  color: Colors.white,
+                );
+              }
 
-            if (!snapshot.hasData || !snapshot.data!.exists) {
-              return const Icon(
-                Icons.person,
-              );
-            }
+              if (!snapshot.hasData || !snapshot.data!.exists) {
+                return const Icon(
+                  Icons.person,
+                  color: Colors.white,
+                );
+              }
 
-            Map<String, dynamic> userData =
-                snapshot.data!.data()! as Map<String, dynamic>;
+              Map<String, dynamic> userData =
+                  snapshot.data!.data()! as Map<String, dynamic>;
 
-            return customTextWidget(userData['name'].toString().substring(0, 1),
-                Colors.grey[900], FontWeight.w500, 18);
-            // Add more widgets to display other user details as needed
-          },
+              return customTextWidget(
+                  userData['name'].toString().substring(0, 1),
+                  Colors.white,
+                  FontWeight.w500,
+                  18);
+              // Add more widgets to display other user details as needed
+            },
+          ),
         ),
       ),
     ),
@@ -74,7 +81,7 @@ Widget GlobalAppBar(_userStream, text) {
             activeColor: Colors.blue[900],
             activeTrackColor: Colors.blue.shade100,
             inactiveThumbColor: Colors.white,
-            inactiveTrackColor: Colors.grey,
+            inactiveTrackColor: const Color(0xff4F3D56).withOpacity(0.7),
             value: _themeController.isDarkMode.value,
             onChanged: (value) => _themeController.toggleTheme(),
           ),
@@ -127,7 +134,7 @@ Widget GlobalAppBar1(text) {
             activeColor: Colors.blue[900],
             activeTrackColor: Colors.blue.shade100,
             inactiveThumbColor: Colors.white,
-            inactiveTrackColor: Colors.grey,
+            inactiveTrackColor: const Color(0xff4F3D56).withOpacity(0.7),
             value: _themeController.isDarkMode.value,
             onChanged: (value) => _themeController.toggleTheme(),
           ),

@@ -4,10 +4,10 @@ import 'package:finance_track_app/ui/financial_goals/goal_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-Future<void> showUpdateGoalDialog(context, index, text) async {
+Future<void> showUpdateGoalDialog(context, index, amount, text) async {
   TextEditingController updatesavings = TextEditingController();
   GoalController controllergoal = Get.put(GoalController());
-  updatesavings.text = text;
+  updatesavings.text = amount;
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -33,7 +33,8 @@ Future<void> showUpdateGoalDialog(context, index, text) async {
                     height: 5,
                   ),
                   customElevetedBtn(() {
-                    controllergoal.updateData(index, updatesavings.text);
+                    debugPrint(text);
+                    controllergoal.updateData(index, updatesavings.text, text);
                     updatesavings.clear();
 
                     Navigator.pop(context);

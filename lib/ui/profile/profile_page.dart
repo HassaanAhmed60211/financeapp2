@@ -86,7 +86,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               builder: (controller) {
                                 return CircleAvatar(
                                   radius: 85,
-                                  backgroundColor: Colors.grey[300],
+                                  backgroundColor:
+                                      const Color(0xff4F3D56).withOpacity(0.4),
                                   child: CircleAvatar(
                                     radius: 80,
                                     backgroundColor: Colors.grey.shade300,
@@ -189,7 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   snapshot.data!['name'],
                                   _themeController.isDarkMode.value
                                       ? ColorConstraint().primaryColor
-                                      : ColorConstraint.primaryLightColor,
+                                      : const Color.fromARGB(255, 104, 79, 114),
                                   FontWeight.w800,
                                   21,
                                 ),
@@ -200,12 +201,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                       snapshot.data!['name'],
                                     );
                                   },
-                                  icon: Icon(
-                                    Icons.edit,
-                                    color: _themeController.isDarkMode.value
-                                        ? ColorConstraint().primaryColor
-                                        : ColorConstraint.primaryLightColor,
-                                  ),
+                                  icon: Icon(Icons.edit,
+                                      color: _themeController.isDarkMode.value
+                                          ? ColorConstraint().primaryColor
+                                          : const Color.fromARGB(
+                                              255, 104, 79, 114)),
                                 ),
                               ],
                             ),

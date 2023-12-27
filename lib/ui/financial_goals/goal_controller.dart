@@ -1,6 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finance_track_app/core/Model/goal_model.dart';
+import 'package:finance_track_app/ui/services/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class GoalController extends GetxController {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   RxString username = ''.obs;
   RxBool convertToPKR = false.obs; // Track the selected currency
   RxDouble progressval = 0.0.obs;
@@ -10,33 +18,47 @@ class GoalController extends GetxController {
   RxDouble percNotification = 0.0.obs;
   RxString nameNotification1 = ''.obs;
   RxString percNotification1 = ''.obs;
-  List goalData = [];
+  GoalModel? goalData;
+  List<GoalModel>? data;
 
-  addData(String goalname, String curentsaving, String totalsaving) {
-    Map<String, dynamic> newData = {
-      'goalname': goalname,
-      'curentsaving': curentsaving,
-      'totalsaving': totalsaving,
-    };
+  @override
+  void onInit() {
+    // Get called when controller is created
+    fetchAllGoals();
+    super.onInit();
+    if (nameNotification.isNotEmpty) {
+      NotificationService().showNotification(
+          title: nameNotification.value,
+          body:
+              'Hey!! You are to close to complete your Goal. Your Goal is ${percNotification.value}% completed.');
+    }
+  }
 
-    goalData.add(newData);
-    print("DATAAAAAAAAA $goalData");
+  addData(String goalname, String curentsaving, String totalsaving) async {
+    goalData = GoalModel(
+        goalname: goalname,
+        curentsaving: curentsaving,
+        totalsaving: totalsaving);
+
+    await _db
+        .collection('goal')
+        .doc(_auth.currentUser!.uid)
+        .collection('all_goals')
+        .add(goalData!.toJson());
     goalNotification();
     update();
   }
 
   void goalNotification() {
-    for (int i = 0; i < goalData.length; i++) {
-      percentage.value = double.parse(goalData[i]['curentsaving']) /
-          double.parse(goalData[i]['totalsaving']) *
+    for (int i = 0; i < data!.length; i++) {
+      percentage.value = double.parse(data![i].curentsaving.toString()) /
+          double.parse(data![i].totalsaving.toString()) *
           100;
       if (percentage.value > 95) {
-        nameNotification.value = goalData[i]['goalname'];
+        nameNotification.value = data![i].goalname.toString();
         percNotification.value = percentage.value;
       }
     }
-    print(nameNotification);
-    print(percNotification);
   }
 
   double calculateProgress(double currentValue, double maxValue) {
@@ -57,19 +79,62 @@ class GoalController extends GetxController {
     return currentValue / maxValue;
   }
 
-  updateData(int index, String amount) {
-    if (double.parse(amount) > double.parse(goalData[index]['totalsaving'])) {
-      print('Not Updated');
-    } else {
-      goalData[index]['curentsaving'] = amount;
+  Future<List<GoalModel>?> fetchAllGoals() async {
+    try {
+      var querySnapshot = await _db
+          .collection('goal')
+          .doc(_auth.currentUser!.uid)
+          .collection('all_goals')
+          .get();
+
+      data = querySnapshot.docs
+          .map((document) => GoalModel.fromJson(document.data()))
+          .toList();
+      goalNotification();
+
+      return data;
+    } catch (e) {
+      debugPrint('Error fetching transactions: $e');
+      return [];
     }
-    goalNotification();
-    update();
   }
 
-  deleteData(int index) {
-    goalData.removeAt(index);
+  updateData(int index, String amount, String name) async {
+    if (double.parse(amount) >
+        double.parse(data![index].totalsaving.toString())) {
+      debugPrint('Not Updated');
+    } else {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
+          .collection('goal')
+          .doc(_auth.currentUser!.uid)
+          .collection('all_goals')
+          .where('goalname', isEqualTo: name)
+          .get();
 
+      for (QueryDocumentSnapshot<Map<String, dynamic>> document
+          in querySnapshot.docs) {
+        await document.reference.update({
+          'curentsaving': amount,
+        });
+      }
+      goalNotification();
+      update();
+    }
+  }
+
+  deleteData(int index, String name) async {
+    data!.removeAt(index);
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
+        .collection('goal')
+        .doc(_auth.currentUser!.uid)
+        .collection('all_goals')
+        .where('goalname', isEqualTo: name)
+        .get();
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> document
+        in querySnapshot.docs) {
+      await document.reference.delete();
+    }
     update();
   }
 }

@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 Widget customTransContainer(context) {
   final ThemeController themeController = Get.put(ThemeController());
   DashboardController controllerdash = Get.put(DashboardController());
+
   return Container(
       width: Get.width,
       decoration: BoxDecoration(
@@ -36,83 +37,86 @@ Widget customTransContainer(context) {
               }, 'Add', 20, 110)
             ],
           ),
-          StreamBuilder<List<TransactionModel>>(
-            stream: controller.fetchAllTransaction(),
-            builder: (context, AsyncSnapshot<List<TransactionModel>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return SizedBox(
-                  height: Get.height * 0.5,
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      color: ColorConstraint.primaryLightColor,
-                    ),
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: customTextWidget(
-                    snapshot.error.toString(),
-                    Colors.black,
-                    FontWeight.w500,
-                    12,
-                  ),
-                );
-              } else if (snapshot.data!.isEmpty) {
-                return Center(
-                  child: customTextWidget(
-                    'No data available',
-                    Colors.black,
-                    FontWeight.w500,
-                    12,
-                  ),
-                );
-              } else {
-                final transaction = snapshot.data!;
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: transaction.length,
-                  itemBuilder: (context, index) {
-                    final trans = transaction[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Card(
-                        color: Colors.blue[900],
-                        child: Obx(
-                          () => ListTile(
-                            title: Text(trans.text ?? ''),
-                            subtitle: Text(controller.convertToPKR.value
-                                ? "\$${controller.convertPkrToUsd(double.parse(trans.price!)).toStringAsFixed(2)}"
-                                : "Rs.${trans.price}"),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () {
-                                    String text = trans.text!;
-                                    String price = trans.price!;
-                                    showUpdateDialog(
-                                        context, index, text, price);
-                                  },
-                                ),
-                                Spaces.smallh,
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () {
-                                    controller.deleteData(index, trans.text!);
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+          GetBuilder<DashboardController>(builder: (controlle) {
+            return FutureBuilder<List<TransactionModel>>(
+              future: controlle.fetchAllTransaction(),
+              builder:
+                  (context, AsyncSnapshot<List<TransactionModel>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return SizedBox(
+                    height: Get.height * 0.5,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstraint.primaryLightColor,
                       ),
-                    );
-                  },
-                );
-              }
-            },
-          ),
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: customTextWidget(
+                      snapshot.error.toString(),
+                      Colors.black,
+                      FontWeight.w500,
+                      12,
+                    ),
+                  );
+                } else if (snapshot.data!.isEmpty) {
+                  return Center(
+                    child: customTextWidget(
+                      'No data available',
+                      Colors.black,
+                      FontWeight.w500,
+                      12,
+                    ),
+                  );
+                } else {
+                  final transaction = snapshot.data!;
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: transaction.length,
+                    itemBuilder: (context, index) {
+                      final trans = transaction[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Card(
+                            color: const Color(0xff4F3D56).withOpacity(0.8),
+                            child: Obx(
+                              () => ListTile(
+                                title: Text(trans.text ?? ''),
+                                subtitle: Text(controllerdash.convertToPKR.value
+                                    ? "\$${controllerdash.convertPkrToUsd(double.parse(trans.price!)).toStringAsFixed(2)}"
+                                    : "Rs.${trans.price}"),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit),
+                                      onPressed: () {
+                                        String text = trans.text!;
+                                        String price = trans.price!;
+                                        showUpdateDialog(
+                                            context, index, text, price);
+                                      },
+                                    ),
+                                    Spaces.smallh,
+                                    IconButton(
+                                      icon: const Icon(Icons.delete),
+                                      onPressed: () {
+                                        controller.deleteData(
+                                            index, trans.text!);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )),
+                      );
+                    },
+                  );
+                }
+              },
+            );
+          }),
         ]),
       ));
 }

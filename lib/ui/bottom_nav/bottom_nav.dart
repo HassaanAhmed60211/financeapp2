@@ -3,6 +3,7 @@ import 'package:finance_track_app/ui/Home.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_x/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:water_drop_nav_bar/water_drop_nav_bar.dart';
 
@@ -35,7 +36,11 @@ class _MyHomePageState extends State<MyBottomNavBar> {
         children: controller.bottomBarPages, // Use the list of pages here
       ),
       bottomNavigationBar: WaterDropNavBar(
-        backgroundColor: Colors.cyan,
+        bottomPadding: 20,
+        backgroundColor: const Color(0xff4F3D56),
+        inactiveIconColor: Colors.grey.shade400,
+        waterDropColor: Colors.white,
+        iconSize: 30,
         onItemSelected: (int index) {
           setState(() {
             selectedIndex = index;
@@ -49,19 +54,17 @@ class _MyHomePageState extends State<MyBottomNavBar> {
         selectedIndex: selectedIndex,
         barItems: <BarItem>[
           BarItem(
-            filledIcon: Icons.bookmark_rounded,
-            outlinedIcon: Icons.bookmark_border_rounded,
+            filledIcon: Icons.house,
+            outlinedIcon: Icons.house_outlined,
+          ),
+          BarItem(filledIcon: Icons.money, outlinedIcon: Icons.credit_card),
+          BarItem(
+            filledIcon: Icons.pie_chart,
+            outlinedIcon: Icons.pie_chart_outline,
           ),
           BarItem(
-              filledIcon: Icons.favorite_rounded,
-              outlinedIcon: Icons.favorite_border_rounded),
-          BarItem(
-            filledIcon: Icons.email_rounded,
-            outlinedIcon: Icons.email_outlined,
-          ),
-          BarItem(
-            filledIcon: Icons.folder_rounded,
-            outlinedIcon: Icons.folder_outlined,
+            filledIcon: Icons.person_3,
+            outlinedIcon: Icons.person_3_outlined,
           ),
         ],
       ),

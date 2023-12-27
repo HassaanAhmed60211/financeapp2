@@ -22,17 +22,6 @@ class _FinancialGoalsState extends State<FinancialGoals> {
   final ThemeController _themeController = Get.put(ThemeController());
 
   GoalController controllergoal = Get.put(GoalController());
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    if (controllergoal.nameNotification.isNotEmpty) {
-      NotificationService().showNotification(
-          title: controllergoal.nameNotification.value,
-          body:
-              'Hey!! You are to close to complete your Goal. Your Goal is ${controllergoal.percNotification.value}% completed.');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

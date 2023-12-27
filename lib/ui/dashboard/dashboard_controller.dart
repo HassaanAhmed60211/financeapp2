@@ -10,21 +10,24 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class DashboardController extends GetxController {
-  RxString username = ''.obs;
-  RxBool convertToPKR = false.obs; // Track the selected currency
-  final db = FirebaseFirestore.instance;
-  FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Observables
+  RxString username = ''.obs;
+  RxBool convertToPKR = false.obs;
   RxDouble totalIncomeInUsd = 0.0.obs;
   RxDouble totalExpensesInUsd = 0.0.obs;
   RxDouble remainingIncomeInUsd = 0.0.obs;
+
+  List<String> perIncome = <String>[];
   List<dynamic> pExpense = <dynamic>[];
   List<dynamic> pSaving = <dynamic>[];
   List<dynamic> title = <dynamic>[];
   List<dynamic> timing = <dynamic>[];
   List<String> time = <String>[];
+  double? price;
   ExpenseAnalyticsModel? dataAnalytics;
-  List<String> perIncome = <String>[];
   IncomeModel? data;
 
   double remainingSavings = 0.0;
@@ -32,69 +35,62 @@ class DashboardController extends GetxController {
 
   @override
   void onInit() async {
-    // Get called when controller is created
     super.onInit();
-    var incomeData = await db
+    await _fetchIncomeData();
+    fetchExchangeRate();
+  }
+
+  // Fetch user's income data
+  Future<void> _fetchIncomeData() async {
+    var incomeData = await _db
         .collection('expense_analytics')
-        .doc(auth.currentUser!.uid)
+        .doc(_auth.currentUser!.uid)
         .get();
 
-    fetchExchangeRate();
     data = IncomeModel(
-        expenses: incomeData['expenses'],
-        income: incomeData['income'],
-        savings: incomeData['savings']);
-    debugPrint(data!.expenses.toString());
-    debugPrint(data!.income.toString());
-    debugPrint(data!.savings.toString());
+      expenses: incomeData['expenses'],
+      income: incomeData['income'],
+      savings: incomeData['savings'],
+    );
 
+    _updatePerIncome();
+    _fetchExpenseGraph();
+    update();
+  }
+
+  // Update perIncome list
+  void _updatePerIncome() {
+    perIncome.clear();
     for (var i = 5; i > 0; i--) {
       int val = data!.income! ~/ i;
       perIncome.add(val.toString());
     }
-    update();
+  }
 
+  // Fetch expense graph data
+  Future<void> _fetchExpenseGraph() async {
     var expenseGraph =
-        await db.collection('expense_graph').doc(auth.currentUser!.uid).get();
+        await _db.collection('expense_graph').doc(_auth.currentUser!.uid).get();
 
     dataAnalytics = ExpenseAnalyticsModel(
-        perExpense: expenseGraph['perExpense'],
-        perIncome: expenseGraph['perIncome'],
-        perSaving: expenseGraph['perSaving'],
-        time: expenseGraph['time']);
+      perExpense: expenseGraph['perExpense'],
+      perIncome: expenseGraph['perIncome'],
+      perSaving: expenseGraph['perSaving'],
+      time: expenseGraph['time'],
+    );
 
     update();
   }
 
-//Add transaction in firebase
-  addData(String text, String price, context) async {
-    var date = DateTime.now();
+  // Updated _updateExpenseGraph function
+  Future<void> _updateExpenseGraph(Map<String, dynamic> newData) async {
+    try {
+      var expenseGraphDoc = await _db
+          .collection('expense_graph')
+          .doc(_auth.currentUser!.uid)
+          .get();
 
-    Map<String, dynamic> newData = {
-      'text': text,
-      'price': price,
-      'time': DateFormat.MMMMd().format(date),
-      'month': DateFormat.MMMM().format(date),
-    };
-    // added on transaction ended
-    await db
-        .collection('transactions')
-        .doc(auth.currentUser!.uid)
-        .collection('add_transaction')
-        .add(newData);
-    //=======================================
-
-    calculateTotalExpenses();
-    //=======================================
-    // Added expense graph
-
-    await db
-        .collection('expense_graph')
-        .doc(auth.currentUser!.uid)
-        .get()
-        .then((docu) async {
-      // if data exist so update the data
-      if (docu.exists) {
+      if (expenseGraphDoc.exists) {
         dataAnalytics?.perExpense?.add(
           double.tryParse(newData['price'] ?? '0.0') ?? 0.0,
         );
@@ -108,12 +104,11 @@ class DashboardController extends GetxController {
           newData['text'],
         );
 
-        await db
+        await _db
             .collection('expense_graph')
-            .doc(auth.currentUser!.uid)
+            .doc(_auth.currentUser!.uid)
             .update(dataAnalytics!.toJson());
       } else {
-        //else it set data inside user doc id
         pExpense.add(double.tryParse(newData['price'] ?? '0.0') ?? 0.0);
         pSaving.add(data!.savings);
         title.add(newData['text']);
@@ -121,143 +116,207 @@ class DashboardController extends GetxController {
         dataAnalytics = ExpenseAnalyticsModel(
             perExpense: pExpense, perSaving: pSaving, time: time, title: title);
 
-        await db
+        await _db
             .collection('expense_graph')
-            .doc(auth.currentUser!.uid)
+            .doc(_auth.currentUser!.uid)
             .set(dataAnalytics!.toJson());
       }
-    });
+    } catch (e) {
+      debugPrint('Error updating expense graph: $e');
+    }
+  }
+
+  // Add transaction to Firebase
+  Future<void> addData(String text, String price, context) async {
+    var date = DateTime.now();
+
+    Map<String, dynamic> newData = {
+      'text': text,
+      'price': price,
+      'time': DateFormat.MMMMd().format(date),
+      'month': DateFormat.MMMM().format(date),
+    };
+
+    await _db
+        .collection('transactions')
+        .doc(_auth.currentUser!.uid)
+        .collection('add_transaction')
+        .add(newData);
+
+    _calculateTotalExpenses();
+    await _updateExpenseGraph(newData);
+
     fetchAllTransaction();
     update();
   }
 
-//Update transaction in firebase
-  updateData(String title, String price, String text) async {
+  // Update transaction in Firebase
+  Future<void> updateData(String title, String price, String text) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance
-              .collection('transactions')
-              .doc(auth.currentUser!.uid)
-              .collection('add_transaction')
-              .where('text', isEqualTo: text)
-              .get();
-
-      for (QueryDocumentSnapshot<Map<String, dynamic>> document
-          in querySnapshot.docs) {
-        await document.reference.update({
-          'text': title,
-          'price': price,
-        });
-      }
-
-      calculateTotalExpenses();
+      await _updateFirestoreData(title, price, text);
+      _calculateTotalExpenses();
       fetchAllTransaction();
       update();
     } catch (e) {
-      print('Error updating transactions: $e');
+      debugPrint('Error updating transactions: $e');
     }
   }
 
-//Delete transaction from firebase
+  Future<void> _updateFirestoreData(
+      String title, String price, String text) async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
+        .collection('transactions')
+        .doc(_auth.currentUser!.uid)
+        .collection('add_transaction')
+        .where('text', isEqualTo: text)
+        .get();
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> document
+        in querySnapshot.docs) {
+      await document.reference.update({
+        'text': title,
+        'price': price,
+      });
+    }
+  }
+
+  // Delete transaction from Firebase
   Future<void> deleteData(index, String searchText) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance
-              .collection('transactions')
-              .doc(auth.currentUser!.uid)
-              .collection('add_transaction')
-              .where('text', isEqualTo: searchText)
-              .get();
+      // await _deleteFirestoreData(searchText);
+      await _calTotalExpensesDelete(searchText);
+      fetchAllTransaction();
+      update();
+    } catch (e) {
+      debugPrint('Error deleting transactions: $e');
+    }
+  }
 
+  // Future<void> _deleteFirestoreData(String searchText) async {
+  //   QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
+  //       .collection('transactions')
+  //       .doc(_auth.currentUser!.uid)
+  //       .collection('add_transaction')
+  //       .where('text', isEqualTo: searchText)
+  //       .get();
+
+  // }
+
+  Future<void> _calTotalExpensesDelete(searchText) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
+          .collection('transactions')
+          .doc(_auth.currentUser!.uid)
+          .collection('add_transaction')
+          .where('text', isEqualTo: searchText)
+          .get();
       for (QueryDocumentSnapshot<Map<String, dynamic>> document
           in querySnapshot.docs) {
         await document.reference.delete();
       }
-      calculateTotalExpenses();
-      fetchAllTransaction();
+
+      QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _db
+          .collection('transactions')
+          .doc(_auth.currentUser!.uid)
+          .collection('add_transaction')
+          .get(); // Recalculate expenses based on the remaining transactions
+      data!.expenses = querySnapshot1.docs
+          .map((document) => double.tryParse(document['price'] ?? "0.0") ?? 0.0)
+          .fold(0.0, (previous, current) => previous! + current);
+
+      IncomeModel incomeData = IncomeModel(
+        expenses: data!.expenses,
+      );
+
+      await _db
+          .collection('expense_analytics')
+          .doc(_auth.currentUser!.uid)
+          .update(incomeData.toJson());
+
+      calculateRemainingIncome();
       update();
     } catch (e) {
-      print('Error deleting transactions: $e');
+      debugPrint('Error calculating total expenses: $e');
     }
   }
 
-  // update income and it update on firebase
+  // Update income in Firebase
   void updateIncome(double? income) async {
     if (income != null) {
       data!.income = income;
-      debugPrint(data!.income.toString());
       update();
-      perIncome.clear();
-
-      for (var i = 5; i > 0; i--) {
-        int val = data!.income! ~/ i;
-        perIncome.add(val.toString());
-      }
+      _updatePerIncome();
 
       IncomeModel incomeData = IncomeModel(
         income: income,
         savings: data!.savings,
       );
-      update();
-      await db
+
+      await _db
           .collection('expense_analytics')
-          .doc(auth.currentUser!.uid)
+          .doc(_auth.currentUser!.uid)
           .set(incomeData.toJson());
-      await db.collection('expense_graph').doc(auth.currentUser!.uid).update({
+      await _db.collection('expense_graph').doc(_auth.currentUser!.uid).update({
         'perIncome': perIncome,
       });
-      calculateTotalExpenses();
+
+      _calculateTotalExpenses();
       update();
     }
   }
 
-  //calculate total expenses from firebase
-  void calculateTotalExpenses() async {
+  // Calculate total expenses from Firebase
+  Future<void> _calculateTotalExpenses() async {
     try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance
-              .collection('transactions')
-              .doc(auth.currentUser!.uid)
-              .collection('add_transaction')
-              .get();
-
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
+          .collection('transactions')
+          .doc(_auth.currentUser!.uid)
+          .collection('add_transaction')
+          .get();
+      debugPrint(querySnapshot.docs.length.toString());
       if (querySnapshot.docs.isNotEmpty) {
         data!.expenses = querySnapshot.docs
             .map((document) =>
-                double.tryParse(document['price'] ?? '0.0') ?? 0.0)
+                double.tryParse(document['price'] ?? "0.0") ?? 0.0)
             .fold(0.0, (previous, current) => previous! + current);
-        calculateRemainingIncome();
+        debugPrint(data!.expenses.toString());
+
         IncomeModel incomeData = IncomeModel(
           expenses: data!.expenses,
         );
-        await db
+
+        await _db
             .collection('expense_analytics')
-            .doc(auth.currentUser!.uid)
+            .doc(_auth.currentUser!.uid)
             .update(incomeData.toJson());
+
         calculateRemainingIncome();
-        debugPrint(data!.expenses.toString());
         update();
       } else {
-        data!.expenses = 0.0;
+        // Handle the case where there are no documents or querySnapshot is null
+        debugPrint('No documents found in the transaction collection.');
       }
-      update();
     } catch (e) {
-      print('Error calculating total expenses: $e');
+      debugPrint('Error calculating total expenses: $e');
     }
   }
 
-  //Fetch all transaction of the user
-  Stream<List<TransactionModel>> fetchAllTransaction() {
-    return FirebaseFirestore.instance
-        .collection('transactions')
-        .doc(auth.currentUser!.uid)
-        .collection('add_transaction')
-        .snapshots()
-        .map((querySnapshot) {
+  // Fetch all transactions of the user
+  Future<List<TransactionModel>> fetchAllTransaction() async {
+    try {
+      var querySnapshot = await _db
+          .collection('transactions')
+          .doc(_auth.currentUser!.uid)
+          .collection('add_transaction')
+          .get();
+
       return querySnapshot.docs
           .map((document) => TransactionModel.fromJson(document.data()))
           .toList();
-    });
+    } catch (e) {
+      debugPrint('Error fetching transactions: $e');
+      return [];
+    }
   }
 
   // fetch USD real time update exchange price for PKR
@@ -279,26 +338,24 @@ class DashboardController extends GetxController {
   }
 
   void calculateRemainingIncome() async {
-    data!.savings = data!.income! - data!.expenses!;
     DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
         await FirebaseFirestore.instance
             .collection('expense_analytics')
-            .doc(auth.currentUser!.uid)
+            .doc(_auth.currentUser!.uid)
             .get();
     if (documentSnapshot.exists) {
-      data!.savings = documentSnapshot.get('income') ??
-          0.0 - documentSnapshot.get('expenses') ??
-          0.0;
+      double documentIncome = documentSnapshot.get('income') ?? 0.0;
+      double documentExpenses = documentSnapshot.get('expenses') ?? 0.0;
+      data!.savings = documentIncome - documentExpenses;
+      IncomeModel incomeData = IncomeModel(
+        savings: data!.savings,
+      );
+      await FirebaseFirestore.instance
+          .collection('expense_analytics')
+          .doc(_auth.currentUser!.uid)
+          .update(incomeData.toJson());
     }
-    calculateRemainingIncome();
-    IncomeModel incomeData = IncomeModel(
-      savings: data!.savings,
-    );
     update();
-    await db
-        .collection('expense_analytics')
-        .doc(auth.currentUser!.uid)
-        .update(incomeData.toJson());
   }
 
   void addDataToModel(

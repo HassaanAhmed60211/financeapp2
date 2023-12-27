@@ -1,3 +1,4 @@
+import 'package:finance_track_app/core/widgets/custom_elevated.dart';
 import 'package:finance_track_app/ui/profile/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -55,12 +56,10 @@ void showBottomInfoProfile(context, val) {
                 alignment: Alignment.center,
                 child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          profileController.updateName(textController.text);
-                          Get.back();
-                        },
-                        child: Text('Update'))),
+                    child: customElevetedBtnWid(() {
+                      profileController.updateName(textController.text);
+                      Get.back();
+                    }, 'Update', 19, Get.width * 0.4)),
               ),
               const SizedBox(
                 height: 30,

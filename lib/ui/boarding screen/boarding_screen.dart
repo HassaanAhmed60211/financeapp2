@@ -119,7 +119,7 @@ class _MyAppState extends State<BoardingScreen> {
   Material get _loginInButton {
     return Material(
       borderRadius: defaultProceedButtonBorderRadius,
-      color: defaultProceedButtonColor,
+      color: ColorConstraint.secondaryColor,
       child: InkWell(
         borderRadius: defaultProceedButtonBorderRadius,
         onTap: () {
@@ -164,14 +164,14 @@ class _MyAppState extends State<BoardingScreen> {
                       ),
                     ),
                     child: ColoredBox(
-                      color: ColorConstraint.secondaryColor,
+                      color: const Color.fromARGB(255, 104, 79, 114),
                       child: Padding(
                         padding: const EdgeInsets.all(10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 10),
+                              padding: const EdgeInsets.only(left: 30),
                               child: CustomIndicator(
                                   netDragPercent: dragDistance,
                                   pagesLength: pagesLength,
