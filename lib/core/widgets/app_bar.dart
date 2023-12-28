@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance_track_app/core/theme.dart';
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/text_widgets.dart';
+import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
 import 'package:finance_track_app/ui/login/login_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,9 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 final ThemeController _themeController = Get.put(ThemeController());
 final _auth = FirebaseAuth.instance;
+final bottomNavController = Get.find<BottomNavBarController>();
 
-Widget GlobalAppBar(_userStream, text) {
+Widget globalAppBar(_userStream, text) {
   return AppBar(
     elevation: 0,
     backgroundColor: Colors.transparent,
@@ -20,6 +22,7 @@ Widget GlobalAppBar(_userStream, text) {
       padding: const EdgeInsets.only(top: 10, left: 10),
       child: InkWell(
         onTap: () {
+          bottomNavController.changePage(3);
         },
         child: CircleAvatar(
           backgroundColor: const Color(0xff4F3D56),

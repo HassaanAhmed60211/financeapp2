@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finance_track_app/core/Model/income_model.dart';
 import 'package:finance_track_app/core/Model/user_model.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_nav.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,8 +19,9 @@ class SignupController extends GetxController {
       debugPrint(user.toString());
 
       if (user != null) {
-        await addUser(UserModel(userid: user.uid, name: name, email: email));
-        Get.to(() => MyBottomNavBar());
+        await addUser(UserModel(
+            userid: user.uid, name: name, email: email, imageUrl: ''));
+        Get.to(() => const MyBottomNavBar());
       }
     } on FirebaseAuthException catch (e) {
       debugPrint(e.code);
@@ -42,6 +44,7 @@ class SignupController extends GetxController {
   Future<void> addUser(UserModel User) async {
     final datauser = FirebaseFirestore.instance.collection('user');
     FirebaseAuth auth = FirebaseAuth.instance;
+    final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
       final user = auth.currentUser;
       if (user != null) {
@@ -49,16 +52,15 @@ class SignupController extends GetxController {
           userid: User.userid,
           email: User.email,
           name: User.name,
+          imageUrl: '',
         );
-        debugPrint(uuserr.name.toString());
-
-        // Print the document ID you're trying to set
-        debugPrint('Document ID: ${user.uid}');
 
         await datauser.doc(user.uid).set(uuserr.toMap());
-
-        // Print a message after setting the document
-        debugPrint('User document added successfully.');
+        await db.collection('expense_analytics').doc(user.uid).set({
+          'expenses': 0.0,
+          'income': 0.0,
+          'savings': 0.0,
+        });
       }
     } catch (e) {
       print('Error adding user document: $e');

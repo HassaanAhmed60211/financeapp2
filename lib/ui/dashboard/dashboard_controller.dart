@@ -89,7 +89,6 @@ class DashboardController extends GetxController {
           .collection('expense_graph')
           .doc(_auth.currentUser!.uid)
           .get();
-
       if (expenseGraphDoc.exists) {
         dataAnalytics?.perExpense?.add(
           double.tryParse(newData['price'] ?? '0.0') ?? 0.0,
@@ -215,25 +214,25 @@ class DashboardController extends GetxController {
         await document.reference.delete();
       }
 
-      QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _db
-          .collection('transactions')
-          .doc(_auth.currentUser!.uid)
-          .collection('add_transaction')
-          .get(); // Recalculate expenses based on the remaining transactions
-      data!.expenses = querySnapshot1.docs
-          .map((document) => double.tryParse(document['price'] ?? "0.0") ?? 0.0)
-          .fold(0.0, (previous, current) => previous! + current);
+      // QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _db
+      //     .collection('transactions')
+      //     .doc(_auth.currentUser!.uid)
+      //     .collection('add_transaction')
+      //     .get(); // Recalculate expenses based on the remaining transactions
+      // data!.expenses = querySnapshot1.docs
+      //     .map((document) => double.tryParse(document['price'] ?? "0.0") ?? 0.0)
+      //     .fold(0.0, (previous, current) => previous! + current);
 
-      IncomeModel incomeData = IncomeModel(
-        expenses: data!.expenses,
-      );
+      // IncomeModel incomeData = IncomeModel(
+      //   expenses: data!.expenses,
+      // );
 
-      await _db
-          .collection('expense_analytics')
-          .doc(_auth.currentUser!.uid)
-          .update(incomeData.toJson());
+      // await _db
+      //     .collection('expense_analytics')
+      //     .doc(_auth.currentUser!.uid)
+      //     .update(incomeData.toJson());
 
-      calculateRemainingIncome();
+      // calculateRemainingIncome();
       update();
     } catch (e) {
       debugPrint('Error calculating total expenses: $e');
@@ -249,17 +248,35 @@ class DashboardController extends GetxController {
 
       IncomeModel incomeData = IncomeModel(
         income: income,
-        savings: data!.savings,
-        expenses: data!.expenses,
+        savings: data?.savings ?? 0.0,
+        expenses: data?.expenses ?? 0.0,
       );
 
       await _db
           .collection('expense_analytics')
           .doc(_auth.currentUser!.uid)
           .set(incomeData.toJson());
-      await _db.collection('expense_graph').doc(_auth.currentUser!.uid).update({
-        'perIncome': perIncome,
-      });
+      var expenseGraphDoc = await _db
+          .collection('expense_graph')
+          .doc(_auth.currentUser!.uid)
+          .get();
+      dataAnalytics = ExpenseAnalyticsModel(
+          perIncome: perIncome,
+          perExpense: dataAnalytics!.perExpense,
+          perSaving: dataAnalytics!.perSaving,
+          time: dataAnalytics!.time);
+
+      if (expenseGraphDoc.exists) {
+        await _db
+            .collection('expense_graph')
+            .doc(_auth.currentUser!.uid)
+            .update(dataAnalytics!.toJson());
+      } else {
+        await _db
+            .collection('expense_graph')
+            .doc(_auth.currentUser!.uid)
+            .set(dataAnalytics!.toJson());
+      }
 
       _calculateTotalExpenses();
       update();

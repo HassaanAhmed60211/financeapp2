@@ -23,7 +23,6 @@ class GoalController extends GetxController {
 
   @override
   void onInit() {
-    // Get called when controller is created
     fetchAllGoals();
     super.onInit();
     if (nameNotification.isNotEmpty) {

@@ -78,7 +78,7 @@ Widget goalList() {
                                     children: [
                                       Text(
                                         goal[index].goalname ?? '',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w700,
                                           color: Colors.black,
@@ -86,7 +86,7 @@ Widget goalList() {
                                       ),
                                       Text(
                                         ' : ${goal[index].curentsaving ?? ''} /',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w500,
                                           color:
@@ -95,7 +95,7 @@ Widget goalList() {
                                       ),
                                       Text(
                                         ' ${goal[index].totalsaving ?? ''}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w500,
                                           color:
@@ -140,7 +140,7 @@ Widget goalList() {
                                 child: ProgressBar(
                                   value: controller.progressval.value,
                                   backgroundColor: Colors.black12,
-                                  gradient: LinearGradient(
+                                  gradient: const LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
@@ -167,7 +167,7 @@ Widget goalList() {
                                       ),
                                       Text(
                                         '${controller.percentage.value.toStringAsFixed(2)}%',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
                                           color: Colors.black,
@@ -187,7 +187,7 @@ Widget goalList() {
                                       ),
                                       Text(
                                         '${controller.remainingperc.toStringAsFixed(2)}%',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
                                           color: Colors.black,

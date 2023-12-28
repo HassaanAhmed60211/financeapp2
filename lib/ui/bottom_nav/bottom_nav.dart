@@ -1,9 +1,5 @@
-import 'package:finance_track_app/core/utils.dart';
-import 'package:finance_track_app/ui/Home.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
-import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_x/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:water_drop_nav_bar/water_drop_nav_bar.dart';
 

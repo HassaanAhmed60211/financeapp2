@@ -63,7 +63,7 @@ class _DashboardPageState extends State<DashboardPage> {
             : ColorConstraint().primaryColor,
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(70),
-            child: GlobalAppBar(_userStream, 'FINANCE TRACKER')),
+            child: globalAppBar(_userStream, 'FINANCE TRACKER')),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: SingleChildScrollView(

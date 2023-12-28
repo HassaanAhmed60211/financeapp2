@@ -20,7 +20,7 @@ class SignupView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: ColorConstraint.secondaryColor, //change your color here
         ),
         backgroundColor: ColorConstraint().primaryColor,

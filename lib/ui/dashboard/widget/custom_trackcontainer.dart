@@ -2,7 +2,6 @@ import 'package:finance_track_app/core/theme.dart';
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/spaces_widget.dart';
 import 'package:finance_track_app/core/widgets/text_widgets.dart';
-import 'package:finance_track_app/ui/bottom_nav/bottom_nav.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
 import 'package:finance_track_app/ui/dashboard/dialogs/income_dialogs.dart';
@@ -11,12 +10,12 @@ import 'package:get/get.dart';
 
 final ThemeController _themeController = Get.put(ThemeController());
 DashboardController controllerdash = Get.put(DashboardController());
-BottomNavBarController bottomNavController = Get.put(BottomNavBarController());
+final bottomNavController = Get.find<BottomNavBarController>();
 
 Widget customTrackContainer(context) {
   return Container(
     width: Get.width,
-    height: Get.height * 0.22,
+    height: Get.height * 0.24,
     decoration: BoxDecoration(
       color: _themeController.isDarkMode.value
           ? Colors.grey[200]
@@ -35,8 +34,7 @@ Widget customTrackContainer(context) {
               children: [
                 TextButton(
                   onPressed: () {
-                    bottomNavController.currentIndex.value = 2;
-                    Get.to(() => MyBottomNavBar());
+                    bottomNavController.changePage(2);
                   },
                   child: const Text(
                     'VIEW EXPENSE ANALYTICS',

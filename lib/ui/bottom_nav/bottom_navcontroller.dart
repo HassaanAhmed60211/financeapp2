@@ -11,13 +11,17 @@ User? user = FirebaseAuth.instance.currentUser;
 String id = user!.uid;
 
 class BottomNavBarController extends GetxController {
-  late PageController pageController;
-  var currentIndex = 0.obs;
+  RxInt selectedIndex = 0.obs;
+  final pageController = PageController(initialPage: 0);
+
+  void changePage(int index) {
+    selectedIndex.value = index;
+  }
+
   GlobalKey bottomNavigationKey = GlobalKey();
   @override
   void onInit() {
     super.onInit();
-    pageController = PageController();
   }
 
   @override
@@ -31,13 +35,6 @@ class BottomNavBarController extends GetxController {
   }
 
   final List<Widget> bottomBarPages = [
-    DashboardPage(id),
-    const FinancialGoals(),
-    ExpenseAnalytics(),
-    const ProfilePage(),
-  ];
-
-  List<Widget> pages = [
     DashboardPage(id),
     const FinancialGoals(),
     ExpenseAnalytics(),
