@@ -250,6 +250,7 @@ class DashboardController extends GetxController {
       IncomeModel incomeData = IncomeModel(
         income: income,
         savings: data!.savings,
+        expenses: data!.expenses,
       );
 
       await _db
@@ -289,14 +290,19 @@ class DashboardController extends GetxController {
             .collection('expense_analytics')
             .doc(_auth.currentUser!.uid)
             .update(incomeData.toJson());
-
+        debugPrint("IDHERR");
         calculateRemainingIncome();
         update();
       } else {
         // Handle the case where there are no documents or querySnapshot is null
+        data!.expenses = 0.0;
+        calculateRemainingIncome();
+        update();
         debugPrint('No documents found in the transaction collection.');
       }
     } catch (e) {
+      data!.expenses = 0.0;
+      update();
       debugPrint('Error calculating total expenses: $e');
     }
   }
@@ -347,9 +353,12 @@ class DashboardController extends GetxController {
       double documentIncome = documentSnapshot.get('income') ?? 0.0;
       double documentExpenses = documentSnapshot.get('expenses') ?? 0.0;
       data!.savings = documentIncome - documentExpenses;
+      debugPrint(data!.savings.toString());
       IncomeModel incomeData = IncomeModel(
         savings: data!.savings,
       );
+
+      debugPrint(data!.savings.toString());
       await FirebaseFirestore.instance
           .collection('expense_analytics')
           .doc(_auth.currentUser!.uid)

@@ -6,9 +6,9 @@ IncomeModel incomeModelFromJson(String str) =>
 String incomeModelToJson(IncomeModel data) => json.encode(data.toJson());
 
 class IncomeModel {
-  double? income;
-  double? expenses;
-  double? savings;
+  num? income;
+  num? expenses;
+  num? savings;
 
   IncomeModel({
     this.income,

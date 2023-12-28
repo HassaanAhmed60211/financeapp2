@@ -19,7 +19,8 @@ Widget GlobalAppBar(_userStream, text) {
     leading: Padding(
       padding: const EdgeInsets.only(top: 10, left: 10),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+        },
         child: CircleAvatar(
           backgroundColor: const Color(0xff4F3D56),
           child: StreamBuilder<DocumentSnapshot>(

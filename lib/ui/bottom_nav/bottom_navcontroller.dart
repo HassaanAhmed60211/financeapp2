@@ -30,17 +30,17 @@ class BottomNavBarController extends GetxController {
     pageController.dispose();
   }
 
-    final List<Widget> bottomBarPages = [
-     DashboardPage(id),
+  final List<Widget> bottomBarPages = [
+    DashboardPage(id),
     const FinancialGoals(),
-     ExpenseAnalytics(),
+    ExpenseAnalytics(),
     const ProfilePage(),
   ];
 
   List<Widget> pages = [
     DashboardPage(id),
-    FinancialGoals(),
+    const FinancialGoals(),
     ExpenseAnalytics(),
-    ProfilePage(),
+    const ProfilePage(),
   ];
 }

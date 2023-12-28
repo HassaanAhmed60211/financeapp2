@@ -90,7 +90,7 @@ Widget customTrackContainer(context) {
                     return Obx(
                       () => customTextWidget(
                         controllerdash.convertToPKR.value
-                            ? "\$${controllerdash.convertPkrToUsd(controller.data?.expenses ?? 0.0).toStringAsFixed(2)}"
+                            ? "\$${controllerdash.convertPkrToUsd(controller.data?.expenses?.toDouble() ?? 0.0).toStringAsFixed(2)}"
                             : "Rs.${controller.data?.expenses ?? 0.0}",
                         const Color(0xffE53935),
                         FontWeight.w800,
@@ -121,7 +121,7 @@ Widget customTrackContainer(context) {
                       child: Obx(
                         () => customTextWidget(
                           controllerdash.convertToPKR.value
-                              ? "\$${controllerdash.convertPkrToUsd(controller.data?.income ?? 0.0).toStringAsFixed(2)}"
+                              ? "\$${controllerdash.convertPkrToUsd(controller.data?.income?.toDouble() ?? 0.0).toStringAsFixed(2)}"
                               : "Rs.${controller.data?.income ?? 0.0}",
                           const Color(0xff00897B),
                           FontWeight.w800,
@@ -149,7 +149,7 @@ Widget customTrackContainer(context) {
                     return Obx(
                       () => customTextWidget(
                         controllerdash.convertToPKR.value
-                            ? "\$${controllerdash.convertPkrToUsd(controller.data?.savings ?? 0.0).toStringAsFixed(2)}"
+                            ? "\$${controllerdash.convertPkrToUsd(controller.data?.savings?.toDouble() ?? 0.0).toStringAsFixed(2)}"
                             : "Rs.${controller.data?.savings ?? 0.0}",
                         const Color(0xff212121),
                         FontWeight.w800,
