@@ -36,12 +36,12 @@ class DashboardController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    await _fetchIncomeData();
+    await fetchIncomeData();
     fetchExchangeRate();
   }
 
   // Fetch user's income data
-  Future<void> _fetchIncomeData() async {
+  Future<void> fetchIncomeData() async {
     var incomeData = await _db
         .collection('expense_analytics')
         .doc(_auth.currentUser!.uid)
@@ -191,16 +191,6 @@ class DashboardController extends GetxController {
     }
   }
 
-  // Future<void> _deleteFirestoreData(String searchText) async {
-  //   QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
-  //       .collection('transactions')
-  //       .doc(_auth.currentUser!.uid)
-  //       .collection('add_transaction')
-  //       .where('text', isEqualTo: searchText)
-  //       .get();
-
-  // }
-
   Future<void> _calTotalExpensesDelete(searchText) async {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
@@ -214,25 +204,24 @@ class DashboardController extends GetxController {
         await document.reference.delete();
       }
 
-      // QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _db
-      //     .collection('transactions')
-      //     .doc(_auth.currentUser!.uid)
-      //     .collection('add_transaction')
-      //     .get(); // Recalculate expenses based on the remaining transactions
-      // data!.expenses = querySnapshot1.docs
-      //     .map((document) => double.tryParse(document['price'] ?? "0.0") ?? 0.0)
-      //     .fold(0.0, (previous, current) => previous! + current);
+      QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _db
+          .collection('transactions')
+          .doc(_auth.currentUser!.uid)
+          .collection('add_transaction')
+          .get(); // Recalculate expenses based on the remaining transactions
 
-      // IncomeModel incomeData = IncomeModel(
-      //   expenses: data!.expenses,
-      // );
-
-      // await _db
-      //     .collection('expense_analytics')
-      //     .doc(_auth.currentUser!.uid)
-      //     .update(incomeData.toJson());
-
-      // calculateRemainingIncome();
+      var expensess = querySnapshot1.docs
+          .map((document) => double.tryParse(document['price'] ?? "0.0") ?? 0.0)
+          .fold(0.0, (previous, current) => previous + current);
+      data = IncomeModel(
+        expenses: expensess,
+      );
+      await _db
+          .collection('expense_analytics')
+          .doc(_auth.currentUser!.uid)
+          .update(data!.toJson());
+      calculateRemainingIncome();
+      fetchAllTransaction();
       update();
     } catch (e) {
       debugPrint('Error calculating total expenses: $e');
