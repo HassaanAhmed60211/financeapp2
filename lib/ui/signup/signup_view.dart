@@ -92,7 +92,7 @@ class SignupView extends StatelessWidget {
                     },
                     child: customTextWidgetWithDecoration(
                         "Login",
-                        const Color(0xff4F3D56),
+                        ColorConstraint.primeColor,
                         FontWeight.w800,
                         18,
                         TextDecoration.underline),
@@ -101,12 +101,22 @@ class SignupView extends StatelessWidget {
               ),
               Spaces.large,
               customElevetedBtn(() async {
-                controller.userSignUp(emailcontroller.text, passcontroller.text,
-                    namecontroller.text, context);
+                if (emailcontroller.text.isNotEmpty &&
+                    passcontroller.text.isNotEmpty &&
+                    namecontroller.text.isNotEmpty) {
+                  controller.userSignUp(emailcontroller.text,
+                      passcontroller.text, namecontroller.text, context);
 
-                emailcontroller.clear();
-                passcontroller.clear();
-                namecontroller.clear();
+                  emailcontroller.clear();
+                  passcontroller.clear();
+                  namecontroller.clear();
+                } else {
+                  var snackbar = const SnackBar(
+                    content: Text("Fields is empty"),
+                    backgroundColor: Colors.red,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                }
               }, 'Signup', 19),
             ],
           ),

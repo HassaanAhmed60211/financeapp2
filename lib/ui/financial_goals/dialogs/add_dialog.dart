@@ -1,5 +1,6 @@
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/custom_elevated.dart';
+import 'package:finance_track_app/core/widgets/custom_snackbar.dart';
 import 'package:finance_track_app/core/widgets/spaces_widget.dart';
 import 'package:finance_track_app/ui/financial_goals/goal_controller.dart';
 import 'package:flutter/material.dart';
@@ -56,9 +57,7 @@ Future<void> showAddGoalDialog(context) async {
                             borderSide:
                                 BorderSide(color: Colors.black38, width: 1))),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
+                  Spaces.mid,
                   customElevetedBtn(() {
                     if (double.parse(goalcurrentsaving.text.toString()) >
                         double.parse(goaltotalsaving.text.toString())) {
@@ -74,6 +73,8 @@ Future<void> showAddGoalDialog(context) async {
                       goalcurrentsaving.clear();
                       goaltotalsaving.clear();
                       Navigator.pop(context);
+                      showSuccessSnackBar(
+                          context: context, label: 'successfully goal added');
                     }
                   }, 'Add', 20)
                 ],

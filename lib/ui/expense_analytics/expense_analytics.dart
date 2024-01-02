@@ -24,7 +24,7 @@ class ExpenseAnalytics extends StatelessWidget {
               : ColorConstraint().primaryColor,
           appBar: PreferredSize(
               preferredSize: const Size.fromHeight(70),
-              child: GlobalAppBar1('EXPENSE ANALYTICS')),
+              child: globalAppBar1('EXPENSE ANALYTICS')),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: SingleChildScrollView(

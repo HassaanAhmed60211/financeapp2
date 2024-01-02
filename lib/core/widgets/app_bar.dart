@@ -16,6 +16,7 @@ final bottomNavController = Get.find<BottomNavBarController>();
 
 Widget globalAppBar(_userStream, text) {
   return AppBar(
+    surfaceTintColor: ColorConstraint.whiteColor,
     elevation: 0,
     backgroundColor: Colors.transparent,
     leading: Padding(
@@ -25,7 +26,7 @@ Widget globalAppBar(_userStream, text) {
           bottomNavController.changePage(3);
         },
         child: CircleAvatar(
-          backgroundColor: const Color(0xff4F3D56),
+          backgroundColor: ColorConstraint.primeColor,
           child: StreamBuilder<DocumentSnapshot>(
             stream: _userStream,
             builder: (BuildContext context,
@@ -85,7 +86,7 @@ Widget globalAppBar(_userStream, text) {
             activeColor: Colors.blue[900],
             activeTrackColor: Colors.blue.shade100,
             inactiveThumbColor: Colors.white,
-            inactiveTrackColor: const Color(0xff4F3D56).withOpacity(0.7),
+            inactiveTrackColor: ColorConstraint.primeColor.withOpacity(0.7),
             value: _themeController.isDarkMode.value,
             onChanged: (value) => _themeController.toggleTheme(),
           ),
@@ -110,8 +111,9 @@ Widget globalAppBar(_userStream, text) {
   );
 }
 
-Widget GlobalAppBar1(text) {
+Widget globalAppBar1(text) {
   return AppBar(
+    surfaceTintColor: ColorConstraint.whiteColor,
     elevation: 0,
     backgroundColor: Colors.transparent,
     automaticallyImplyLeading: false,
@@ -138,7 +140,7 @@ Widget GlobalAppBar1(text) {
             activeColor: Colors.blue[900],
             activeTrackColor: Colors.blue.shade100,
             inactiveThumbColor: Colors.white,
-            inactiveTrackColor: const Color(0xff4F3D56).withOpacity(0.7),
+            inactiveTrackColor: ColorConstraint.primeColor.withOpacity(0.7),
             value: _themeController.isDarkMode.value,
             onChanged: (value) => _themeController.toggleTheme(),
           ),

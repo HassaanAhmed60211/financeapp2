@@ -7,7 +7,6 @@ import 'package:finance_track_app/core/widgets/text_widgets.dart';
 import 'package:finance_track_app/ui/financial_goals/dialogs/add_dialog.dart';
 import 'package:finance_track_app/ui/financial_goals/goal_controller.dart';
 import 'package:finance_track_app/ui/financial_goals/widgets/goal_datalist.dart';
-import 'package:finance_track_app/ui/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -32,7 +31,7 @@ class _FinancialGoalsState extends State<FinancialGoals> {
             : ColorConstraint().primaryColor,
         appBar: PreferredSize(
             preferredSize: const Size.fromHeight(70),
-            child: GlobalAppBar1('FINANCIAL GOALS')),
+            child: globalAppBar1('FINANCIAL GOALS')),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: SingleChildScrollView(

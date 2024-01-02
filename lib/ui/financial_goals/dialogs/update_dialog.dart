@@ -1,5 +1,7 @@
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/custom_elevated.dart';
+import 'package:finance_track_app/core/widgets/custom_snackbar.dart';
+import 'package:finance_track_app/core/widgets/spaces_widget.dart';
 import 'package:finance_track_app/ui/financial_goals/goal_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,15 +31,16 @@ Future<void> showUpdateGoalDialog(context, index, amount, text) async {
                             borderSide:
                                 BorderSide(color: Colors.black38, width: 1))),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
+                  Spaces.mid,
                   customElevetedBtn(() {
                     debugPrint(text);
-                    controllergoal.updateData(index, updatesavings.text, text);
+                    controllergoal.updateData(
+                        index, updatesavings.text, text, context);
                     updatesavings.clear();
 
                     Navigator.pop(context);
+                    showSuccessSnackBar(
+                        context: context, label: 'successfully goal updated');
                   }, 'Add', 20)
                 ],
               ),

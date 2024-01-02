@@ -79,7 +79,7 @@ class LoginView extends StatelessWidget {
                     },
                     child: customTextWidgetWithDecoration(
                         "Signup",
-                        const Color(0xff4F3D56),
+                        ColorConstraint.primeColor,
                         FontWeight.w800,
                         18,
                         TextDecoration.underline),
@@ -89,8 +89,17 @@ class LoginView extends StatelessWidget {
               Spaces.large,
               customElevetedBtn(
                 () {
-                  controller.userLogin(
-                      emailcontroller.text, passcontroller.text, context);
+                  if (emailcontroller.text.isNotEmpty &&
+                      passcontroller.text.isNotEmpty) {
+                    controller.userLogin(
+                        emailcontroller.text, passcontroller.text, context);
+                  } else {
+                    var snackbar = const SnackBar(
+                      content: Text("Fields is empty"),
+                      backgroundColor: Colors.red,
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                  }
                 },
                 'Login',
                 19,

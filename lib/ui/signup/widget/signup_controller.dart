@@ -25,17 +25,19 @@ class SignupController extends GetxController {
       }
     } on FirebaseAuthException catch (e) {
       debugPrint(e.code);
-      if (e.code == 'email-already-in-use') {
+      if (e.code == 'weak-password') {
         var snackbar = const SnackBar(
-          content: Text('This email already exists'),
+          content: Text('The password provided is too weak.'),
           backgroundColor: Colors.red,
         );
+
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
-      } else {
+      } else if (e.code == 'email-already-in-use') {
         var snackbar = const SnackBar(
-          content: Text('An error occurred during signup'),
+          content: Text('The account already exists for that email.'),
           backgroundColor: Colors.red,
         );
+
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
       }
     }

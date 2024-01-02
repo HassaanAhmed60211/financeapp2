@@ -2,6 +2,7 @@ import 'package:finance_track_app/core/Model/transaction_model.dart';
 import 'package:finance_track_app/core/theme.dart';
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/custom_elevated.dart';
+import 'package:finance_track_app/core/widgets/custom_snackbar.dart';
 import 'package:finance_track_app/core/widgets/spaces_widget.dart';
 import 'package:finance_track_app/core/widgets/text_widgets.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
@@ -82,15 +83,26 @@ Widget customTransContainer(context) {
                             color: const Color(0xff4F3D56).withOpacity(0.8),
                             child: Obx(
                               () => ListTile(
-                                title: Text(trans.text ?? ''),
-                                subtitle: Text(controllerdash.convertToPKR.value
-                                    ? "\$${controllerdash.convertPkrToUsd(double.parse(trans.price!)).toStringAsFixed(2)}"
-                                    : "Rs.${trans.price}"),
+                                title: customTextWidget(
+                                    trans.text ?? '',
+                                    ColorConstraint.whiteColor,
+                                    FontWeight.w500,
+                                    16),
+                                subtitle: customTextWidget(
+                                    controllerdash.convertToPKR.value
+                                        ? "\$${controllerdash.convertPkrToUsd(double.parse(trans.price!)).toStringAsFixed(2)}"
+                                        : "Rs.${trans.price}",
+                                    ColorConstraint.whiteColor,
+                                    FontWeight.w600,
+                                    12),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(
-                                      icon: const Icon(Icons.edit),
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: ColorConstraint.whiteColor,
+                                      ),
                                       onPressed: () {
                                         String text = trans.text!;
                                         String price = trans.price!;
@@ -99,13 +111,23 @@ Widget customTransContainer(context) {
                                       },
                                     ),
                                     Spaces.smallh,
-                                    IconButton(
-                                      icon: const Icon(Icons.delete),
-                                      onPressed: () {
-                                        controller.deleteData(
-                                            index, trans.text!);
-                                      },
-                                    ),
+                                    GetBuilder<DashboardController>(
+                                        builder: (controller) {
+                                      return IconButton(
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: ColorConstraint.whiteColor,
+                                        ),
+                                        onPressed: () async {
+                                          await controller.deleteData(
+                                              index, trans.text!);
+                                          controller.fetchIncomeData();
+                                          showSuccessSnackBar(
+                                              context: context,
+                                              label: 'successfully deleted');
+                                        },
+                                      );
+                                    }),
                                   ],
                                 ),
                               ),

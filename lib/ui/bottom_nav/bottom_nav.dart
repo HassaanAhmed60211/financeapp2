@@ -1,3 +1,4 @@
+import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_navcontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,7 +34,7 @@ class _MyHomePageState extends State<MyBottomNavBar> {
       ),
       bottomNavigationBar: WaterDropNavBar(
         bottomPadding: 20,
-        backgroundColor: const Color(0xff4F3D56),
+        backgroundColor: ColorConstraint.primeColor,
         inactiveIconColor: Colors.grey.shade400,
         waterDropColor: Colors.white,
         iconSize: 30,

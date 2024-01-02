@@ -10,20 +10,24 @@ class LoginController extends GetxController {
       await auth.signInWithEmailAndPassword(email: email, password: password);
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        Get.to(() => MyBottomNavBar());
+        Get.to(() => const MyBottomNavBar());
       }
     } on FirebaseAuthException catch (e) {
-      String errorMessage = "";
-
-      if (e.code == 'invalid-login-credentials') {
+      if (e.code == 'user-not-found') {
         var snackbar = const SnackBar(
-          content: Text("User not found"),
+          content: Text('No user found for that email.'),
           backgroundColor: Colors.red,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
-      } else {
+      } else if (e.code == 'wrong-password') {
         var snackbar = const SnackBar(
-          content: Text("Other exception"),
+          content: Text('Wrong password provided'),
+          backgroundColor: Colors.red,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      } else if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+        var snackbar = const SnackBar(
+          content: Text('invalid login credentials'),
           backgroundColor: Colors.red,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackbar);

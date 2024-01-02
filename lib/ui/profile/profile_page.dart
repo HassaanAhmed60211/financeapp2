@@ -45,7 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
             : ColorConstraint().primaryColor,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(70),
-          child: GlobalAppBar1('MY PROFILE'),
+          child: globalAppBar1('MY PROFILE'),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -86,8 +86,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               builder: (controller) {
                                 return CircleAvatar(
                                   radius: 85,
-                                  backgroundColor:
-                                      const Color(0xff4F3D56).withOpacity(0.4),
+                                  backgroundColor: ColorConstraint.primeColor
+                                      .withOpacity(0.4),
                                   child: CircleAvatar(
                                     radius: 80,
                                     backgroundColor: Colors.grey.shade300,
@@ -153,7 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               padding: EdgeInsets.all(2.0),
                               child: Icon(
                                 Icons.add_a_photo,
-                                color: ColorConstraint.primaryLightColor,
+                                color: ColorConstraint.primeColor,
                               ),
                             ),
                           ),
@@ -162,7 +162,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ),
-                Spaces.large,
+                Spaces.mid,
                 StreamBuilder<DocumentSnapshot>(
                   stream: personalData,
                   builder: (BuildContext context,
@@ -182,7 +182,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               FontWeight.w800,
                               21,
                             ),
-                            Spaces.largeh,
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -216,9 +215,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     return const CircularProgressIndicator();
                   },
                 ),
-                const SizedBox(
-                  height: 70,
-                ),
+                Spaces.mid,
                 customTrackContainer(context),
               ],
             ),

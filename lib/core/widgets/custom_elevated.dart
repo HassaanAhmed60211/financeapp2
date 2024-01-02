@@ -8,7 +8,8 @@ Widget customElevetedBtn(onpressed, text, double? fontsize) {
     width: Get.width,
     height: 50,
     child: ElevatedButton(
-        style: TextButton.styleFrom(backgroundColor: const Color(0xff4F3D56)),
+        style:
+            TextButton.styleFrom(backgroundColor: ColorConstraint.primeColor),
         onPressed: onpressed,
         child: customTextWidget(
             text, ColorConstraint().primaryColor, FontWeight.w500, fontsize)),
@@ -20,7 +21,8 @@ Widget customElevetedBtnWid(onpressed, text, double? fontsize, double wid) {
     width: wid,
     height: 40,
     child: ElevatedButton(
-        style: TextButton.styleFrom(backgroundColor: const Color(0xff4F3D56)),
+        style:
+            TextButton.styleFrom(backgroundColor: ColorConstraint.primeColor),
         onPressed: onpressed,
         child: customTextWidget(
             text, ColorConstraint().primaryColor, FontWeight.w500, fontsize)),

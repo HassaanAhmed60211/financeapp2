@@ -1,5 +1,6 @@
 import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/custom_elevated.dart';
+import 'package:finance_track_app/core/widgets/custom_snackbar.dart';
 import 'package:finance_track_app/core/widgets/spaces_widget.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
@@ -44,9 +45,7 @@ Future<void> showAddDialog(context) async {
                             borderSide:
                                 BorderSide(color: Colors.black38, width: 1))),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
+                  Spaces.mid,
                   Builder(builder: (context) {
                     return customElevetedBtn(() {
                       if (totalIncomeVal! > double.parse(expenseprice.text)) {
@@ -56,6 +55,8 @@ Future<void> showAddDialog(context) async {
                         expensename.clear();
                         expenseprice.clear();
                         Navigator.pop(context);
+                        showSuccessSnackBar(
+                            context: context, label: 'successfully added');
                       } else {
                         var snackbar = const SnackBar(
                           content: Text("Please Update your Income"),

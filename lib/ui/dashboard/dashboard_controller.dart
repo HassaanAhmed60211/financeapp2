@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finance_track_app/core/Model/expense_model.dart';
 import 'package:finance_track_app/core/Model/income_model.dart';
 import 'package:finance_track_app/core/Model/transaction_model.dart';
+import 'package:finance_track_app/core/widgets/custom_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -13,8 +14,6 @@ class DashboardController extends GetxController {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Observables
-  RxString username = ''.obs;
   RxBool convertToPKR = false.obs;
   RxDouble totalIncomeInUsd = 0.0.obs;
   RxDouble totalExpensesInUsd = 0.0.obs;
@@ -26,7 +25,7 @@ class DashboardController extends GetxController {
   List<dynamic> title = <dynamic>[];
   List<dynamic> timing = <dynamic>[];
   List<String> time = <String>[];
-  double? price;
+
   ExpenseAnalyticsModel? dataAnalytics;
   IncomeModel? data;
 
@@ -36,12 +35,13 @@ class DashboardController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    await fetchIncomeData();
     fetchExchangeRate();
+    fetchIncomeData();
+    fetchExpenseGraph();
   }
 
   // Fetch user's income data
-  Future<void> fetchIncomeData() async {
+  Future<IncomeModel?> fetchIncomeData() async {
     var incomeData = await _db
         .collection('expense_analytics')
         .doc(_auth.currentUser!.uid)
@@ -52,10 +52,7 @@ class DashboardController extends GetxController {
       income: incomeData['income'],
       savings: incomeData['savings'],
     );
-
-    _updatePerIncome();
-    _fetchExpenseGraph();
-    update();
+    return data;
   }
 
   // Update perIncome list
@@ -68,16 +65,16 @@ class DashboardController extends GetxController {
   }
 
   // Fetch expense graph data
-  Future<void> _fetchExpenseGraph() async {
+  Future<void> fetchExpenseGraph() async {
     var expenseGraph =
         await _db.collection('expense_graph').doc(_auth.currentUser!.uid).get();
 
     dataAnalytics = ExpenseAnalyticsModel(
-      perExpense: expenseGraph['perExpense'],
-      perIncome: expenseGraph['perIncome'],
-      perSaving: expenseGraph['perSaving'],
-      time: expenseGraph['time'],
-    );
+        perExpense: expenseGraph['perExpense'],
+        perIncome: expenseGraph['perIncome'],
+        perSaving: expenseGraph['perSaving'],
+        time: expenseGraph['time'],
+        title: expenseGraph['title']);
 
     update();
   }
@@ -89,12 +86,16 @@ class DashboardController extends GetxController {
           .collection('expense_graph')
           .doc(_auth.currentUser!.uid)
           .get();
+      var updateSaving = await _db
+          .collection('expense_analytics')
+          .doc(_auth.currentUser!.uid)
+          .get();
       if (expenseGraphDoc.exists) {
         dataAnalytics?.perExpense?.add(
           double.tryParse(newData['price'] ?? '0.0') ?? 0.0,
         );
         dataAnalytics?.perSaving?.add(
-          data!.savings,
+          updateSaving['savings'],
         );
         dataAnalytics?.time?.add(
           newData['time'],
@@ -109,7 +110,7 @@ class DashboardController extends GetxController {
             .update(dataAnalytics!.toJson());
       } else {
         pExpense.add(double.tryParse(newData['price'] ?? '0.0') ?? 0.0);
-        pSaving.add(data!.savings);
+        pSaving.add(updateSaving['savings']);
         title.add(newData['text']);
         time.add(newData['time']);
         dataAnalytics = ExpenseAnalyticsModel(
@@ -142,50 +143,38 @@ class DashboardController extends GetxController {
         .collection('add_transaction')
         .add(newData);
 
-    _calculateTotalExpenses();
+    await _calculateTotalExpenses();
     await _updateExpenseGraph(newData);
-
-    fetchAllTransaction();
-    update();
   }
 
   // Update transaction in Firebase
-  Future<void> updateData(String title, String price, String text) async {
+  Future<void> updateData(
+      String title, String price, String text, context) async {
     try {
-      await _updateFirestoreData(title, price, text);
-      _calculateTotalExpenses();
-      fetchAllTransaction();
-      update();
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
+          .collection('transactions')
+          .doc(_auth.currentUser!.uid)
+          .collection('add_transaction')
+          .where('text', isEqualTo: text)
+          .get();
+
+      for (QueryDocumentSnapshot<Map<String, dynamic>> document
+          in querySnapshot.docs) {
+        await document.reference.update({
+          'text': title,
+          'price': price,
+        });
+      }
+      await _calculateTotalExpenses();
     } catch (e) {
       debugPrint('Error updating transactions: $e');
-    }
-  }
-
-  Future<void> _updateFirestoreData(
-      String title, String price, String text) async {
-    QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
-        .collection('transactions')
-        .doc(_auth.currentUser!.uid)
-        .collection('add_transaction')
-        .where('text', isEqualTo: text)
-        .get();
-
-    for (QueryDocumentSnapshot<Map<String, dynamic>> document
-        in querySnapshot.docs) {
-      await document.reference.update({
-        'text': title,
-        'price': price,
-      });
     }
   }
 
   // Delete transaction from Firebase
   Future<void> deleteData(index, String searchText) async {
     try {
-      // await _deleteFirestoreData(searchText);
       await _calTotalExpensesDelete(searchText);
-      fetchAllTransaction();
-      update();
     } catch (e) {
       debugPrint('Error deleting transactions: $e');
     }
@@ -193,6 +182,7 @@ class DashboardController extends GetxController {
 
   Future<void> _calTotalExpensesDelete(searchText) async {
     try {
+      fetchAllTransaction();
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
           .collection('transactions')
           .doc(_auth.currentUser!.uid)
@@ -208,7 +198,7 @@ class DashboardController extends GetxController {
           .collection('transactions')
           .doc(_auth.currentUser!.uid)
           .collection('add_transaction')
-          .get(); // Recalculate expenses based on the remaining transactions
+          .get();
 
       var expensess = querySnapshot1.docs
           .map((document) => double.tryParse(document['price'] ?? "0.0") ?? 0.0)
@@ -221,8 +211,6 @@ class DashboardController extends GetxController {
           .doc(_auth.currentUser!.uid)
           .update(data!.toJson());
       calculateRemainingIncome();
-      fetchAllTransaction();
-      update();
     } catch (e) {
       debugPrint('Error calculating total expenses: $e');
     }
@@ -232,7 +220,6 @@ class DashboardController extends GetxController {
   void updateIncome(double? income) async {
     if (income != null) {
       data!.income = income;
-      update();
       _updatePerIncome();
 
       IncomeModel incomeData = IncomeModel(
@@ -251,9 +238,10 @@ class DashboardController extends GetxController {
           .get();
       dataAnalytics = ExpenseAnalyticsModel(
           perIncome: perIncome,
-          perExpense: dataAnalytics!.perExpense,
-          perSaving: dataAnalytics!.perSaving,
-          time: dataAnalytics!.time);
+          perExpense: expenseGraphDoc['perExpense'],
+          perSaving: expenseGraphDoc['perSaving'],
+          time: expenseGraphDoc['time'],
+          title: expenseGraphDoc['title']);
 
       if (expenseGraphDoc.exists) {
         await _db
@@ -268,7 +256,6 @@ class DashboardController extends GetxController {
       }
 
       _calculateTotalExpenses();
-      update();
     }
   }
 
@@ -286,19 +273,15 @@ class DashboardController extends GetxController {
             .map((document) =>
                 double.tryParse(document['price'] ?? "0.0") ?? 0.0)
             .fold(0.0, (previous, current) => previous! + current);
-        debugPrint(data!.expenses.toString());
-
-        IncomeModel incomeData = IncomeModel(
+        data = IncomeModel(
           expenses: data!.expenses,
         );
 
         await _db
             .collection('expense_analytics')
             .doc(_auth.currentUser!.uid)
-            .update(incomeData.toJson());
-        debugPrint("IDHERR");
+            .update(data!.toJson());
         calculateRemainingIncome();
-        update();
       } else {
         // Handle the case where there are no documents or querySnapshot is null
         data!.expenses = 0.0;
@@ -349,7 +332,7 @@ class DashboardController extends GetxController {
     return amountInPkr / double.parse(pkrValue.toStringAsFixed(1));
   }
 
-  void calculateRemainingIncome() async {
+  Future<void> calculateRemainingIncome() async {
     DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
         await FirebaseFirestore.instance
             .collection('expense_analytics')
@@ -360,26 +343,14 @@ class DashboardController extends GetxController {
       double documentExpenses = documentSnapshot.get('expenses') ?? 0.0;
       data!.savings = documentIncome - documentExpenses;
       debugPrint(data!.savings.toString());
-      IncomeModel incomeData = IncomeModel(
+      data = IncomeModel(
         savings: data!.savings,
       );
-
-      debugPrint(data!.savings.toString());
       await FirebaseFirestore.instance
           .collection('expense_analytics')
           .doc(_auth.currentUser!.uid)
-          .update(incomeData.toJson());
+          .update(data!.toJson());
     }
     update();
-  }
-
-  void addDataToModel(
-    double newPerExpense,
-    double newPerSaving,
-    String newTime,
-  ) {
-    dataAnalytics?.perExpense?.add(newPerExpense);
-    dataAnalytics?.perSaving?.add(newPerSaving);
-    dataAnalytics?.time?.add(newTime);
   }
 }

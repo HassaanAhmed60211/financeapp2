@@ -1,3 +1,4 @@
+import 'package:finance_track_app/core/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -33,7 +34,7 @@ Widget customTextWidgetWithDecoration(
       fontSize: textfontsize ?? 18,
       fontFamily: GoogleFonts.inter().fontFamily,
       decoration: decoration ?? TextDecoration.none,
-      decorationColor: Color(0xff4F3D56),
+      decorationColor: ColorConstraint.primeColor,
     ),
   );
 }
