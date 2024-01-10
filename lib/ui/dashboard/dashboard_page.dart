@@ -11,12 +11,11 @@ import 'package:finance_track_app/ui/dashboard/widget/graph.dart';
 import 'package:finance_track_app/ui/financial_goals/goal_controller.dart';
 import 'package:finance_track_app/ui/services/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DashboardPage extends StatefulWidget {
-  DashboardPage({super.key});
+  const DashboardPage({super.key});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -28,7 +27,6 @@ GoalController goalController = Get.put(GoalController());
 class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // getId();
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {

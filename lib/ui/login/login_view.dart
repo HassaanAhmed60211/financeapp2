@@ -8,6 +8,7 @@ import 'package:finance_track_app/ui/signup/signup_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// ignore: must_be_immutable
 class LoginView extends StatelessWidget {
   LoginView({super.key});
   LoginController controller = Get.put(LoginController());

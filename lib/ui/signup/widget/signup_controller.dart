@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:finance_track_app/core/Model/income_model.dart';
 import 'package:finance_track_app/core/Model/user_model.dart';
 import 'package:finance_track_app/ui/bottom_nav/bottom_nav.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,7 +54,7 @@ class SignupController extends GetxController {
     }
   }
 
-  Future<void> addUser(UserModel User) async {
+  Future<void> addUser(UserModel userrr) async {
     final datauser = FirebaseFirestore.instance.collection('user');
     FirebaseAuth auth = FirebaseAuth.instance;
     final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -63,9 +62,9 @@ class SignupController extends GetxController {
       final user = auth.currentUser;
       if (user != null) {
         final uuserr = UserModel(
-          userid: User.userid,
-          email: User.email,
-          name: User.name,
+          userid: userrr.userid,
+          email: userrr.email,
+          name: userrr.name,
           imageUrl: '',
         );
 
@@ -77,7 +76,7 @@ class SignupController extends GetxController {
         });
       }
     } catch (e) {
-      print('Error adding user document: $e');
+      debugPrint('Error adding user document: $e');
     }
   }
 }

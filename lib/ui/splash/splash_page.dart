@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
+// ignore: must_be_immutable
 class SplashScreen extends StatelessWidget {
   SplashScreen({super.key});
   SplashController controller = Get.put(SplashController());

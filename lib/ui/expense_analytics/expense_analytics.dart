@@ -9,6 +9,7 @@ import 'package:flutter_charts/flutter_charts.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+// ignore: must_be_immutable
 class ExpenseAnalytics extends StatelessWidget {
   ExpenseAnalytics({super.key});
   final ThemeController _themeController = Get.put(ThemeController());
@@ -122,8 +123,7 @@ class ExpenseAnalytics extends StatelessWidget {
                     .map((item) => item is int
                         ? item.toDouble()
                         : double.tryParse(item.toString()) ?? 0.0)
-                    .toList() ??
-                [],
+                    .toList(),
           ],
           yUserLabels: perIncome?.map((item) => item.toString()).toList() ?? [],
           xUserLabels: timeData.map((item) => item.toString()).toList(),

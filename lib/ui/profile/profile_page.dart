@@ -17,6 +17,7 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 
@@ -91,11 +92,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: CircleAvatar(
                                     radius: 80,
                                     child: controller.isVal
-                                        ? Container(
-                                            child:
-                                                const CircularProgressIndicator(
-                                              color: Colors.blue,
-                                            ),
+                                        ? const CircularProgressIndicator(
+                                            color: Colors.blue,
                                           )
                                         : CircleAvatar(
                                             backgroundColor: Colors.transparent,

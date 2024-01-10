@@ -122,6 +122,7 @@ Widget customTransContainer(context) {
                                           await controller.deleteData(
                                               index, trans.text!);
                                           controller.fetchIncomeData();
+                                          // ignore: use_build_context_synchronously
                                           showSuccessSnackBar(
                                               context: context,
                                               label: 'successfully deleted');

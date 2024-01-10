@@ -4,7 +4,6 @@ import 'package:finance_track_app/core/utils.dart';
 import 'package:finance_track_app/core/widgets/graph_chart.dart';
 import 'package:finance_track_app/core/widgets/text_widgets.dart';
 import 'package:finance_track_app/ui/dashboard/dashboard_controller.dart';
-import 'package:finance_track_app/ui/dashboard/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:get/get.dart';

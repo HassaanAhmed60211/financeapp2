@@ -9,6 +9,7 @@ import 'package:finance_track_app/ui/signup/widget/signup_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// ignore: must_be_immutable
 class SignupView extends StatelessWidget {
   SignupView({super.key});
   SignupController controller = Get.put(SignupController());

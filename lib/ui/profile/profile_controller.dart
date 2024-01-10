@@ -16,11 +16,6 @@ class ProfileController extends GetxController {
   final db = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   IncomeModel? data;
-  @override
-  void onInit() {
-    // TODO: implement onInit
-    super.onInit();
-  }
 
   updateAnalytics() async {
     var incomeData = await db

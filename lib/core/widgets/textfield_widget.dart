@@ -8,7 +8,7 @@ Widget customTextField(controller, hinttext, bool? value) {
     decoration: InputDecoration(
       hintText: hinttext,
       hintStyle:
-          TextStyle(color: Color(0xff78828A), fontWeight: FontWeight.w400),
+          const TextStyle(color: Color(0xff78828A), fontWeight: FontWeight.w400),
       enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Color(0xffECF1F6))),
