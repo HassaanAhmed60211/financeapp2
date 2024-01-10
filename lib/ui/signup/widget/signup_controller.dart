@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SignupController extends GetxController {
+  TextEditingController emailcontroller = TextEditingController();
+  TextEditingController passcontroller = TextEditingController();
+  TextEditingController namecontroller = TextEditingController();
   void userSignUp(email, password, name, context) async {
     final auth = FirebaseAuth.instance;
     try {
@@ -22,19 +25,28 @@ class SignupController extends GetxController {
         await addUser(UserModel(
             userid: user.uid, name: name, email: email, imageUrl: ''));
         Get.to(() => const MyBottomNavBar());
+        emailcontroller.clear();
+        passcontroller.clear();
+        namecontroller.clear();
       }
     } on FirebaseAuthException catch (e) {
       debugPrint(e.code);
       if (e.code == 'weak-password') {
         var snackbar = const SnackBar(
-          content: Text('The password provided is too weak.'),
+          content: Text(
+            'The password provided is too weak.',
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: Colors.red,
         );
 
         ScaffoldMessenger.of(context).showSnackBar(snackbar);
       } else if (e.code == 'email-already-in-use') {
         var snackbar = const SnackBar(
-          content: Text('The account already exists for that email.'),
+          content: Text(
+            'The account already exists for that email.',
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: Colors.red,
         );
 

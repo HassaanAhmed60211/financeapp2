@@ -10,12 +10,13 @@ import 'package:finance_track_app/ui/dashboard/widget/custom_transcontainer.dart
 import 'package:finance_track_app/ui/dashboard/widget/graph.dart';
 import 'package:finance_track_app/ui/financial_goals/goal_controller.dart';
 import 'package:finance_track_app/ui/services/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DashboardPage extends StatefulWidget {
-  String id;
-  DashboardPage(this.id, {super.key});
+  DashboardPage({super.key});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -30,7 +31,6 @@ class _DashboardPageState extends State<DashboardPage> {
     // TODO: implement initState
     super.initState();
     // getId();
-
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
         AwesomeNotifications().requestPermissionToSendNotifications();
@@ -45,10 +45,11 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Stream<DocumentSnapshot> get _userStream {
-    // Replace 'users' with the correct collection name
+    final auth = FirebaseAuth.instance;
+    debugPrint(auth.currentUser!.uid.toString());
     return FirebaseFirestore.instance
         .collection('user')
-        .doc(widget.id)
+        .doc(auth.currentUser!.uid)
         .snapshots();
   }
 

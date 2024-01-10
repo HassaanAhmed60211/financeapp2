@@ -63,6 +63,7 @@ dependencies:
   water_drop_nav_bar: ^2.2.0+5
   font_awesome_x: ^10.5.1
   flutter_icon_snackbar: ^1.1.4
+  flutter_hooks: ^0.20.4
 
 dev_dependencies:
   flutter_test:

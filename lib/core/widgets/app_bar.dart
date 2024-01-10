@@ -14,7 +14,7 @@ final ThemeController _themeController = Get.put(ThemeController());
 final _auth = FirebaseAuth.instance;
 final bottomNavController = Get.find<BottomNavBarController>();
 
-Widget globalAppBar(_userStream, text) {
+Widget globalAppBar(userStream, text) {
   return AppBar(
     surfaceTintColor: ColorConstraint.whiteColor,
     elevation: 0,
@@ -28,7 +28,7 @@ Widget globalAppBar(_userStream, text) {
         child: CircleAvatar(
           backgroundColor: ColorConstraint.primeColor,
           child: StreamBuilder<DocumentSnapshot>(
-            stream: _userStream,
+            stream: userStream,
             builder: (BuildContext context,
                 AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.hasError) {
@@ -51,7 +51,7 @@ Widget globalAppBar(_userStream, text) {
 
               Map<String, dynamic> userData =
                   snapshot.data!.data()! as Map<String, dynamic>;
-
+              debugPrint(userData.toString());
               return customTextWidget(
                   userData['name'].toString().substring(0, 1),
                   Colors.white,

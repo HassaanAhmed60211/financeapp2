@@ -75,11 +75,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             return Text('Error: ${snapshot.error}');
                           } else if (snapshot.hasData) {
                             String imageUrl = snapshot.data?['imageUrl'] ??
-                                'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352634/ijfy0uytq6rbmt1qpgtp.png';
+                                'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352618/wqb2koc41wzuzhbn4nk3.png';
 
                             if (imageUrl.isEmpty) {
                               imageUrl =
-                                  'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352634/ijfy0uytq6rbmt1qpgtp.png';
+                                  'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352618/wqb2koc41wzuzhbn4nk3.png';
                             }
 
                             return GetBuilder<ProfileController>(
@@ -90,7 +90,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                       .withOpacity(0.4),
                                   child: CircleAvatar(
                                     radius: 80,
-                                    backgroundColor: Colors.grey.shade300,
                                     child: controller.isVal
                                         ? Container(
                                             child:

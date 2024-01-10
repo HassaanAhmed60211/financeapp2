@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 class DashboardController extends GetxController {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  final user = FirebaseAuth.instance.currentUser;
   RxBool convertToPKR = false.obs;
   RxDouble totalIncomeInUsd = 0.0.obs;
   RxDouble totalExpensesInUsd = 0.0.obs;
@@ -90,37 +90,28 @@ class DashboardController extends GetxController {
           .collection('expense_analytics')
           .doc(_auth.currentUser!.uid)
           .get();
-      if (expenseGraphDoc.exists) {
-        dataAnalytics?.perExpense?.add(
-          double.tryParse(newData['price'] ?? '0.0') ?? 0.0,
-        );
-        dataAnalytics?.perSaving?.add(
-          updateSaving['savings'],
-        );
-        dataAnalytics?.time?.add(
-          newData['time'],
-        );
-        dataAnalytics?.title?.add(
-          newData['text'],
-        );
-
-        await _db
-            .collection('expense_graph')
-            .doc(_auth.currentUser!.uid)
-            .update(dataAnalytics!.toJson());
-      } else {
-        pExpense.add(double.tryParse(newData['price'] ?? '0.0') ?? 0.0);
-        pSaving.add(updateSaving['savings']);
-        title.add(newData['text']);
-        time.add(newData['time']);
-        dataAnalytics = ExpenseAnalyticsModel(
-            perExpense: pExpense, perSaving: pSaving, time: time, title: title);
-
-        await _db
-            .collection('expense_graph')
-            .doc(_auth.currentUser!.uid)
-            .set(dataAnalytics!.toJson());
-      }
+      pExpense.clear();
+      pSaving.clear();
+      title.clear();
+      time.clear();
+      pExpense.addAll([...expenseGraphDoc['perExpense']]);
+      pSaving.addAll([...expenseGraphDoc['perSaving']]);
+      title.addAll([...expenseGraphDoc['title']]);
+      time.addAll([...expenseGraphDoc['time']]);
+      pExpense.add(double.tryParse(newData['price'] ?? '0.0') ?? 0.0);
+      pSaving.add(updateSaving['savings']);
+      title.add(newData['text']);
+      time.add(newData['time']);
+      dataAnalytics = ExpenseAnalyticsModel(
+          perIncome: perIncome,
+          perExpense: pExpense,
+          perSaving: pSaving,
+          time: time,
+          title: title);
+      await _db
+          .collection('expense_graph')
+          .doc(_auth.currentUser!.uid)
+          .update(dataAnalytics!.toJson());
     } catch (e) {
       debugPrint('Error updating expense graph: $e');
     }
@@ -236,19 +227,20 @@ class DashboardController extends GetxController {
           .collection('expense_graph')
           .doc(_auth.currentUser!.uid)
           .get();
-      dataAnalytics = ExpenseAnalyticsModel(
-          perIncome: perIncome,
-          perExpense: expenseGraphDoc['perExpense'],
-          perSaving: expenseGraphDoc['perSaving'],
-          time: expenseGraphDoc['time'],
-          title: expenseGraphDoc['title']);
-
       if (expenseGraphDoc.exists) {
+        dataAnalytics?.perIncome?.add(
+          perIncome,
+        );
+
         await _db
             .collection('expense_graph')
             .doc(_auth.currentUser!.uid)
             .update(dataAnalytics!.toJson());
       } else {
+        dataAnalytics = ExpenseAnalyticsModel(
+          perIncome: perIncome,
+        );
+
         await _db
             .collection('expense_graph')
             .doc(_auth.currentUser!.uid)

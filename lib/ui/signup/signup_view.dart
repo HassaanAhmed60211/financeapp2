@@ -12,14 +12,13 @@ import 'package:get/get.dart';
 class SignupView extends StatelessWidget {
   SignupView({super.key});
   SignupController controller = Get.put(SignupController());
-  TextEditingController emailcontroller = TextEditingController();
-  TextEditingController passcontroller = TextEditingController();
-  TextEditingController namecontroller = TextEditingController();
+
   DashboardController dashController = Get.put(DashboardController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: ColorConstraint.whiteColor,
         iconTheme: const IconThemeData(
           color: ColorConstraint.secondaryColor, //change your color here
         ),
@@ -60,7 +59,8 @@ class SignupView extends StatelessWidget {
                     ColorConstraint.secondaryColor, FontWeight.w700, 14),
               ),
               Spaces.smallh,
-              customTextField(namecontroller, 'Enter your name', false),
+              customTextField(
+                  controller.namecontroller, 'Enter your name', false),
               Spaces.mid,
               Align(
                 alignment: Alignment.topLeft,
@@ -68,8 +68,8 @@ class SignupView extends StatelessWidget {
                     ColorConstraint.secondaryColor, FontWeight.w700, 14),
               ),
               Spaces.smallh,
-              customTextField(
-                  emailcontroller, 'Enter your email address', false),
+              customTextField(controller.emailcontroller,
+                  'Enter your email address', false),
               Spaces.mid,
               Align(
                 alignment: Alignment.topLeft,
@@ -77,7 +77,8 @@ class SignupView extends StatelessWidget {
                     ColorConstraint.secondaryColor, FontWeight.w700, 14),
               ),
               Spaces.smallh,
-              customTextField(passcontroller, 'Enter your password', false),
+              customTextField(
+                  controller.passcontroller, 'Enter your password', false),
               Spaces.mid,
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -101,15 +102,14 @@ class SignupView extends StatelessWidget {
               ),
               Spaces.large,
               customElevetedBtn(() async {
-                if (emailcontroller.text.isNotEmpty &&
-                    passcontroller.text.isNotEmpty &&
-                    namecontroller.text.isNotEmpty) {
-                  controller.userSignUp(emailcontroller.text,
-                      passcontroller.text, namecontroller.text, context);
-
-                  emailcontroller.clear();
-                  passcontroller.clear();
-                  namecontroller.clear();
+                if (controller.emailcontroller.text.isNotEmpty &&
+                    controller.passcontroller.text.isNotEmpty &&
+                    controller.namecontroller.text.isNotEmpty) {
+                  controller.userSignUp(
+                      controller.emailcontroller.text,
+                      controller.passcontroller.text,
+                      controller.namecontroller.text,
+                      context);
                 } else {
                   var snackbar = const SnackBar(
                     content: Text("Fields is empty"),

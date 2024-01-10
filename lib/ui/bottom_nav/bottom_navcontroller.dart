@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 // import '../views/home/home_page.dart';
-User? user = FirebaseAuth.instance.currentUser;
-String id = user!.uid;
 
 class BottomNavBarController extends GetxController {
   RxInt selectedIndex = 0.obs;
   final pageController = PageController(initialPage: 0);
 
+
   void changePage(int index) {
     selectedIndex.value = index;
+    // debugPrint(id.toString());
   }
 
   GlobalKey bottomNavigationKey = GlobalKey();
@@ -35,7 +35,7 @@ class BottomNavBarController extends GetxController {
   }
 
   final List<Widget> bottomBarPages = [
-    DashboardPage(id),
+    DashboardPage(),
     const FinancialGoals(),
     ExpenseAnalytics(),
     const ProfilePage(),

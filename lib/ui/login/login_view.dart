@@ -11,12 +11,12 @@ import 'package:get/get.dart';
 class LoginView extends StatelessWidget {
   LoginView({super.key});
   LoginController controller = Get.put(LoginController());
-  TextEditingController emailcontroller = TextEditingController();
-  TextEditingController passcontroller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: ColorConstraint.whiteColor,
         automaticallyImplyLeading: false,
         backgroundColor: ColorConstraint().primaryColor,
         centerTitle: true,
@@ -55,8 +55,8 @@ class LoginView extends StatelessWidget {
                     ColorConstraint.secondaryColor, FontWeight.w700, 14),
               ),
               Spaces.smallh,
-              customTextField(
-                  emailcontroller, 'Enter your email address', false),
+              customTextField(controller.emailcontroller,
+                  'Enter your email address', false),
               Spaces.mid,
               Align(
                 alignment: Alignment.topLeft,
@@ -64,7 +64,8 @@ class LoginView extends StatelessWidget {
                     ColorConstraint.secondaryColor, FontWeight.w700, 14),
               ),
               Spaces.smallh,
-              customTextField(passcontroller, 'Enter your password', true),
+              customTextField(
+                  controller.passcontroller, 'Enter your password', true),
               Spaces.mid,
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -89,10 +90,10 @@ class LoginView extends StatelessWidget {
               Spaces.large,
               customElevetedBtn(
                 () {
-                  if (emailcontroller.text.isNotEmpty &&
-                      passcontroller.text.isNotEmpty) {
-                    controller.userLogin(
-                        emailcontroller.text, passcontroller.text, context);
+                  if (controller.emailcontroller.text.isNotEmpty &&
+                      controller.passcontroller.text.isNotEmpty) {
+                    controller.userLogin(controller.emailcontroller.text,
+                        controller.passcontroller.text, context);
                   } else {
                     var snackbar = const SnackBar(
                       content: Text("Fields is empty"),
