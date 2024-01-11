@@ -78,17 +78,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             String imageUrl = snapshot.data?['imageUrl'] ??
                                 'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352618/wqb2koc41wzuzhbn4nk3.png';
 
-                            if (imageUrl.isEmpty) {
-                              imageUrl =
-                                  'https://res.cloudinary.com/dcub1wonq/image/upload/v1701352618/wqb2koc41wzuzhbn4nk3.png';
-                            }
-
                             return GetBuilder<ProfileController>(
                               builder: (controller) {
                                 return CircleAvatar(
                                   radius: 85,
-                                  backgroundColor: ColorConstraint.primeColor
-                                      .withOpacity(0.4),
+                                  backgroundColor: Colors.grey[200],
                                   child: CircleAvatar(
                                     radius: 80,
                                     child: controller.isVal
